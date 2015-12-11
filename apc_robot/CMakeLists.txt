@@ -82,9 +82,11 @@ target_link_libraries(  apc_arms_joint          ${catkin_LIBRARIES})
 #target_link_libraries(  apc_robot_moveit        ${catkin_LIBRARIES})
 
 add_library(            apc_robot_grippers      src/apc_robot_grippers.cpp)
+add_dependencies(       apc_robot_grippers   	apc_msgs_generate_messages_cpp)
 target_link_libraries(  apc_robot_grippers      ${catkin_LIBRARIES})
 
 add_library(            pr2_torso        		src/pr2_torso.cpp)
+add_dependencies(       pr2_torso     	                apc_msgs_generate_messages_cpp)
 #add_executable(        pr2_torso        		src/pr2_torso.cpp)
 target_link_libraries(  pr2_torso        		${catkin_LIBRARIES})
 
@@ -100,9 +102,11 @@ add_dependencies(       pr2_base                move_base_msgs_generate_messages
 ## Old versions and Tesing
 
 add_executable(         joint     src/apc_arms_joint.cpp)
+add_dependencies(       joint   	apc_msgs_generate_messages_cpp)
 target_link_libraries(  joint     ${catkin_LIBRARIES})
 
 add_executable(         grippers     src/apc_robot_grippers.cpp)
+add_dependencies(       grippers   	apc_msgs_generate_messages_cpp)
 target_link_libraries(  grippers     ${catkin_LIBRARIES})
 
 #add_executable(         testing_node           src/testing/testing_node.cpp)
