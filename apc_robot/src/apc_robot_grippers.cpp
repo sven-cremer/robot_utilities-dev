@@ -19,14 +19,25 @@ Gripper::Gripper()
 {
 	ROS_INFO("Gripper::Gripper - Initializing");
 
-	std::string robot;
-	if(!(nh.getParam("/apc_robot/robot", robot))) { ROS_ERROR("APC robot parameter not found."); }
+	std::string robot = "pr2";
+	if(!(nh.getParam("/apc_robot/robot", robot)))
+	{
+		ROS_WARN("APC robot parameter not found.");
+	}
 
 	std::string param_left  = "/apc_robot/"+robot+"/gripper_left";
 	std::string param_right = "/apc_robot/"+robot+"/gripper_right";
 
-	if(!(nh.getParam(param_left,  gripper_left_topic_name)))  { ROS_ERROR("Gripper topic name parameter not found."); }
-	if(!(nh.getParam(param_right, gripper_right_topic_name))) { ROS_ERROR("Gripper topic name parameter not found."); }
+	if(!(nh.getParam(param_left,  gripper_left_topic_name)))
+	{
+		ROS_WARN("Gripper topic name parameter not found, using PR2 settings!");
+		gripper_left_topic_name = "l_gripper_controller/gripper_action";
+	}
+	if(!(nh.getParam(param_right, gripper_right_topic_name)))
+	{
+		ROS_WARN("Gripper topic name parameter not found, using PR2 settings!");
+		gripper_right_topic_name = "r_gripper_controller/gripper_action";
+	}
 
 	ROS_INFO(" left client:  %s", gripper_left_topic_name.c_str());
 	ROS_INFO(" right client: %s", gripper_right_topic_name.c_str());
