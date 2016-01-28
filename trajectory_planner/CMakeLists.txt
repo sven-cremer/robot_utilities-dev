@@ -43,7 +43,7 @@ include_directories(
 ## Executables
 add_executable(         cirular_trajectory       	src/circle_trajectory.cpp)
 target_link_libraries(  cirular_trajectory   		 	${catkin_LIBRARIES})
-#add_dependencies(       cirular_trajectory       move_base_msgs_generate_messages_cpp)
+#add_dependencies(       cirular_trajectory       move_base_msgs_generate_messages_cpp apc_msgs_generate_messages_cpp)
 
 #############
 ## Install ##

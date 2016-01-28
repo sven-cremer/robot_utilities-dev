@@ -15,10 +15,20 @@
 
 // ROS
 #include <ros/ros.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseArray.h>
+#include <apc_msgs/TrajectoryGenerate.h>
 #include <cmath>
 
 class CircleTrajectory
 {
+//This public section is for enum declaration only
+public:
+	enum AXIS{
+	XY,
+	XZ,
+	YZ
+};
 private:
 	//!ROS Handle
 	/*!
@@ -26,14 +36,26 @@ private:
 	 */
 	ros::NodeHandle nh;
 
-	std::vector<double> trajectory_positions;
+	std::vector<geometry_msgs::Pose> trajectory_positions;
+	//geometry_msgs::Pose[] trajectory_positions;
+	//geometry_msgs::PoseArray trajectory_positions;
 	std::vector<double> trajectory_velocities;
 
-	double radius;
+	double 	radius;
+	double 	max_theta;
+	double 	max_azumith;
+	int 	resolution;
+	int	    sphere;
+	AXIS	axis;
+
+	bool	ready;
+
 public:
+
 	CircleTrajectory();
 	~CircleTrajectory();
 	void generate();
+	bool call(apc_msgs::TrajectoryGenerate::Request &req,apc_msgs::TrajectoryGenerate::Response &res);
 };
 
 #endif

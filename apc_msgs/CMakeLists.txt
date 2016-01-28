@@ -39,6 +39,7 @@ add_service_files(DIRECTORY srv FILES
   SetImageCrop.srv
   ReturnJointStates.srv
   GetItemFromWorkOrder.srv
+  TrajectoryGenerate.srv
 )
 
 generate_messages(

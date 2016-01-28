@@ -1,0 +1,6 @@
+<launch>
+   <rosparam file="$(find trajectory_planner)/config/circular_trajectory.yaml"
+             command="load" />
+             
+   <node pkg="trajectory_planner" type="cirular_trajectory" name="circular_trajectory_server" output="screen"/>
+</launch>
