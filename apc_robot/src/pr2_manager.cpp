@@ -35,7 +35,7 @@ PR2Manager::PR2Manager(std::string arm_ctrl_new)
 	// Set controller names
 	arm_ctrl_new_     = arm_ctrl_new;
 
-	arm_controllers_default.push_back("r_arm_controller");
+//	arm_controllers_default.push_back("r_arm_controller");
 	arm_controllers_default.push_back("l_arm_controller");
 	arm_controllers_cart.push_back(arm_ctrl_new_);
 
@@ -95,8 +95,7 @@ PR2Manager::PR2Manager(std::string arm_ctrl_new)
 
 
 	// Position robot with grippers open
-	robotInit(true);
-
+	//robotInit(true);
 
 	ROS_INFO("PR2Manager initialized!");
 }
@@ -127,23 +126,37 @@ void PR2Manager::robotInit(bool open_grippers)
 
 	torso.sendGoal(0.05);
 
-	std::vector<double> l_joints;
-	l_joints.push_back(0.149233);
-	l_joints.push_back(1.16291);
-	l_joints.push_back(0.159471);
-	l_joints.push_back(-1.71565);
-	l_joints.push_back(-3.1908);
-	l_joints.push_back(-0.521468);
-	l_joints.push_back(-1.52892);
+	std::vector<double> l_joints;	// TODO read from yaml file
+//	l_joints.push_back(0.149233);	// PR2 cart pushing
+//	l_joints.push_back(1.16291);
+//	l_joints.push_back(0.159471);
+//	l_joints.push_back(-1.71565);
+//	l_joints.push_back(-3.1908);
+//	l_joints.push_back(-0.521468);
+//	l_joints.push_back(-1.52892);
+	l_joints.push_back(0.744537);	// PR2 tactile calibration
+	l_joints.push_back(0.518209);
+	l_joints.push_back(1.05854);
+	l_joints.push_back(-1.80121);
+	l_joints.push_back(-3.18497);
+	l_joints.push_back(-1.00517);
+	l_joints.push_back(2.30901);
 
 	std::vector<double> r_joints;
-	r_joints.push_back(0.0063641);
-	r_joints.push_back(1.1557);
-	r_joints.push_back(-0.00750675);
-	r_joints.push_back(-1.73534);
-	r_joints.push_back(3.09916);
-	r_joints.push_back(-0.607375);
-	r_joints.push_back(-1.5531);
+//	r_joints.push_back(0.0063641);
+//	r_joints.push_back(1.1557);
+//	r_joints.push_back(-0.00750675);
+//	r_joints.push_back(-1.73534);
+//	r_joints.push_back(3.09916);
+//	r_joints.push_back(-0.607375);
+//	r_joints.push_back(-1.5531);
+	r_joints.push_back(-0.361039);
+	r_joints.push_back(0.682823);
+	r_joints.push_back(-1.18862);
+	r_joints.push_back(-0.852238);
+	r_joints.push_back(5.68685);
+	r_joints.push_back(-1.20154);
+	r_joints.push_back(-3.41097);
 
 	arms.sendGoal(l_joints, ArmsJoint::LEFT);
 	arms.sendGoal(r_joints, ArmsJoint::RIGHT);
@@ -175,25 +188,46 @@ void PR2Manager::off(bool open_grippers)
 /***********************************************************************************************************************
 Open/close grippers
 ***********************************************************************************************************************/
-void PR2Manager::openGrippers()
+void PR2Manager::openGrippers(PR2Manager::WhichArm a)
 {
-	grippers.open();
-	while(!grippers.motionComplete())
+	switch(a)
 	{
-		ROS_INFO("Waiting for gripper motions to complete ...");
-		sleep(2);
+	case PR2Manager::LEFT:
+		grippers.open(Gripper::LEFT);
+		break;
+	case PR2Manager::RIGHT:
+		grippers.open(Gripper::RIGHT);
+		break;
+	default:
+		grippers.open();
 	}
-}
-void PR2Manager::closeGrippers()
-{
-	grippers.close();
-	while(!grippers.motionComplete())
-	{
-		ROS_INFO("Waiting for gripper motions to complete ...");
-		sleep(2);
-	}
-}
 
+	while(!grippers.motionComplete())
+	{
+		ROS_INFO("Waiting for gripper motions to complete ...");
+		sleep(2);
+	}
+}
+void PR2Manager::closeGrippers(PR2Manager::WhichArm a)
+{
+	switch(a)
+	{
+	case PR2Manager::LEFT:
+		grippers.close(Gripper::LEFT);
+		break;
+	case PR2Manager::RIGHT:
+		grippers.close(Gripper::RIGHT);
+		break;
+	default:
+		grippers.close();
+	}
+
+	while(!grippers.motionComplete())
+	{
+		ROS_INFO("Waiting for gripper motions to complete ...");
+		sleep(2);
+	}
+}
 /***********************************************************************************************************************
 State
 ***********************************************************************************************************************/

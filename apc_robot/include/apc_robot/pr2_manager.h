@@ -48,6 +48,12 @@ public:
 	    FAILURE
 	  };
 
+	  enum WhichArm{
+	    BOTH,
+	    LEFT,
+	    RIGHT
+	  };
+
 	PR2Manager(std::string arm_ctrl_new);
 	~PR2Manager();
 
@@ -55,8 +61,8 @@ public:
 	void on(		bool close_grippers=true);
 	void off(		bool open_grippers=true);
 
-	void openGrippers();
-	void closeGrippers();
+	void openGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
+	void closeGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 
 	void printState();
 
