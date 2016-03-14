@@ -150,13 +150,14 @@ void PR2Manager::robotInit(bool open_grippers)
 //	r_joints.push_back(3.09916);
 //	r_joints.push_back(-0.607375);
 //	r_joints.push_back(-1.5531);
-	r_joints.push_back(-0.361039);
-	r_joints.push_back(0.682823);
-	r_joints.push_back(-1.18862);
-	r_joints.push_back(-0.852238);
-	r_joints.push_back(5.68685);
-	r_joints.push_back(-1.20154);
-	r_joints.push_back(-3.41097);
+	r_joints.push_back(-0.263623);
+	r_joints.push_back(0.856581 );
+	r_joints.push_back(-0.615513);
+	r_joints.push_back(-0.960093);
+	r_joints.push_back(5.0942);
+	r_joints.push_back(-1.32154);
+	r_joints.push_back(-3.15487);
+
 
 	arms.sendGoal(l_joints, ArmsJoint::LEFT);
 	arms.sendGoal(r_joints, ArmsJoint::RIGHT);
