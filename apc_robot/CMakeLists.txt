@@ -28,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES apc_robot_grippers pr2_head pr2_torso apc_arms_cartesian pr2_base apc_arms_joint #apc_robot_moveit
+  LIBRARIES apc_robot_grippers pr2_head pr2_torso apc_arms_cartesian pr2_base apc_arms_joint pr2_manager #apc_robot_moveit
   CATKIN_DEPENDS geometry_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface roscpp rospy std_msgs sensor_msgs control_msgs actionlib tf visualization_msgs apc_msgs move_base_msgs 
 #  DEPENDS system_lib
 )
@@ -98,6 +98,8 @@ add_library(            pr2_base                src/base.cpp)
 target_link_libraries(  pr2_base                ${catkin_LIBRARIES})
 add_dependencies(       pr2_base                move_base_msgs_generate_messages_cpp)
 
+add_library(            pr2_manager             src/pr2_manager.cpp)
+target_link_libraries(  pr2_manager             pr2_torso apc_arms_joint apc_robot_grippers ${catkin_LIBRARIES})
 
 ## Old versions and Tesing
 
@@ -147,7 +149,7 @@ target_link_libraries(  grippers     ${catkin_LIBRARIES})
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS apc_robot_grippers pr2_torso pr2_head apc_arms_cartesian pr2_base apc_arms_joint #apc_robot_moveit
+install(TARGETS apc_robot_grippers pr2_torso pr2_head apc_arms_cartesian pr2_base apc_arms_joint pr2_manager #apc_robot_moveit
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

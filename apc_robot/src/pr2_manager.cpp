@@ -14,6 +14,7 @@ REVISION HISTORY:
 2014.02.07  SC     original file creation
 2014.02.14  SC     code cleanup, new gripper client
 2014.02.17  SC     services for setting gains
+2015.10.26  SC     ported to hydro
 2016.02.17  SC     changed to a general PR2manager
 ***********************************************************************************************************************/
 
@@ -22,84 +23,79 @@ REVISION HISTORY:
 /***********************************************************************************************************************
 controllers
  ***********************************************************************************************************************/
-std::string PR2Manager::RIGHT_ARM_CONTROLLER  	= "r_arm_controller";
-std::string PR2Manager::LEFT_ARM_CONTROLLER   	= "l_arm_controller";
-std::string PR2Manager::PR2_CARTPULL_CONTROLLER = "pr2_cart";
+//std::string PR2Manager::RIGHT_ARM_CONTROLLER  	= "r_arm_controller";
+//std::string PR2Manager::LEFT_ARM_CONTROLLER   	= "l_arm_controller";
+//std::string PR2Manager::PR2_CARTPULL_CONTROLLER = "pr2_cart";
 
 /***********************************************************************************************************************
 initializes services and clients
 ***********************************************************************************************************************/
-PR2Manager::PR2Manager()
+PR2Manager::PR2Manager(std::string arm_ctrl_new)
 {
+	// Set controller names
+	arm_ctrl_new_     = arm_ctrl_new;
+
+	arm_controllers_default.push_back("r_arm_controller");
+	arm_controllers_default.push_back("l_arm_controller");
+	arm_controllers_cart.push_back(arm_ctrl_new_);
+
+	// ROS service clients
 	list_srv_ = nh.serviceClient<pr2_mechanism_msgs::ListControllers>("pr2_controller_manager/list_controllers");
-
-	// Switch client for cart pushing
 	switch_controllers_service = nh.serviceClient<pr2_mechanism_msgs::SwitchController>("pr2_controller_manager/switch_controller");
-	arm_controllers_default.push_back(LEFT_ARM_CONTROLLER);
-	arm_controllers_default.push_back(RIGHT_ARM_CONTROLLER);
-	arm_controllers_cart.push_back(PR2_CARTPULL_CONTROLLER);
 
+	// Initialize the default controller mode                  // TODO: make this a function (update current controllers)
+	for(int i=0;i<arm_controllers_default.size();i++)
+	{
+		std::string arm_ctrl = arm_controllers_default[i];
+		PR2Manager::ControlState state = controllerState(arm_ctrl);
 
-	// Initialize the current Controller modes                  // TODO: make this a function (update current controllers)
-	if(controllerState(LEFT_ARM_CONTROLLER) == RUNNING)
-	{
-		ROS_INFO("Left arm in POSITION_CONTROL");
-	}
-	else if(controllerState(LEFT_ARM_CONTROLLER) == STOPPED)
-	{
-		ROS_WARN("Turning on arm controllers ...");
-		switchControllers(arm_controllers_default,arm_controllers_cart);
-	}
-	else
-	{
-		ROS_ERROR("No left arm controller running!");
-		exit(-1);
-	}
-
-	if(controllerState(RIGHT_ARM_CONTROLLER) == RUNNING)
-	{
-		ROS_INFO("Right arm in POSITION_CONTROL");
-	}
-	else if(controllerState(RIGHT_ARM_CONTROLLER) == STOPPED)
-	{
-		ROS_WARN("Turning on arm controllers ...");
-		switchControllers(arm_controllers_default,arm_controllers_cart);
-	}
-	else
-	{
-		ROS_ERROR("No right arm controller running!");
-		exit(-1);
+		if(state == RUNNING)
+		{
+			ROS_INFO("%s is running",arm_ctrl.c_str());
+		}
+		else if(state == STOPPED)
+		{
+			ROS_WARN("Turning on %s ...",arm_ctrl.c_str());
+			switchControllers(arm_controllers_default,arm_controllers_cart);
+		}
+		else
+		{
+			ROS_ERROR("No left arm controller running!");
+			exit(-1);
+		}
 	}
 
-	if(controllerState(PR2_CARTPULL_CONTROLLER) == RUNNING)
+	// Stop new arm controller
+	for(int i=0;i<arm_controllers_cart.size();i++)
 	{
-		ROS_WARN("Turning off cart controller");
-		switchControllers(arm_controllers_default,arm_controllers_cart);
+		std::string arm_ctrl = arm_controllers_cart[i];
+		PR2Manager::ControlState state = controllerState(arm_ctrl);
+
+		if(state == RUNNING)
+		{
+			ROS_WARN("Turning off %s ...",arm_ctrl.c_str());
+			switchControllers(arm_controllers_default,arm_controllers_cart);
+		}
+		else if(state == STOPPED)
+		{
+			ROS_INFO("%s is stopped",arm_ctrl.c_str());
+		}
+		else
+		{
+			ROS_ERROR("No new arm controller running!");
+			exit(-1);
+		}
 	}
-	else if(controllerState(PR2_CARTPULL_CONTROLLER) == STOPPED)
-	{
-		ROS_INFO("Cart controller is stopped ...");
-	}
-	else
-	{
-		ROS_ERROR("No cart controller running!");
-		exit(-1);
-	}
+
+	// Wait for services
+	ROS_INFO("Waiting for services...");
+
+	//ros::service::waitForService("/pr2_cart/getState",-1);
+	//srv_get_State = nh.serviceClient<ice_msgs::getState>("/pr2_cart/getState");
 
 
-	  // Wait for services
-	  ROS_INFO("Waiting for services...");
-
-	  ros::service::waitForService("/pr2_cart/getState",-1);
-
-	  srv_get_State = nh.serviceClient<ice_msgs::getState>("/pr2_cart/getState");
-
-
-//	  ros::service::waitForService("/pr2_cart/reinitCtrl",-1);
-//	  srv_reinitCtrl = nh.serviceClient<ice_msgs::setValue>("/pr2_cart/reinitCtrl");
-
-		// Position robot with grippers open
-		robotInit(true);
+	// Position robot with grippers open
+	robotInit(true);
 
 
 	ROS_INFO("PR2Manager initialized!");
@@ -129,8 +125,7 @@ void PR2Manager::robotInit(bool open_grippers)
 //		sleep(2);
 //	}
 
-	torso.sendGoal(0.2);
-
+	torso.sendGoal(0.05);
 
 	std::vector<double> l_joints;
 	l_joints.push_back(0.149233);
@@ -202,21 +197,6 @@ void PR2Manager::closeGrippers()
 /***********************************************************************************************************************
 State
 ***********************************************************************************************************************/
-bool PR2Manager::get_State_(ice_msgs::getState * currentState)
-{
-	ice_msgs::getState temp;
-
-	if (srv_get_State.call(temp))
-	{
-		currentState->response = temp.response;
-		return true;
-	}
-	{
-		ROS_ERROR("Failed to get state!");
-		return false;
-	}
-}
-
 void PR2Manager::printState()
 {
 
@@ -369,7 +349,7 @@ int main(int argc, char **argv)
 
 	ROS_INFO("### Starting pr2_cart_manager ###");
 
-	PR2Manager manager;
+	PR2Manager manager("pr2_cart");
 
 //	ROS_INFO("PRESS [ENTER] TO CLOSE GRIPPERS AND START CONTROLLER");
 //	getchar();

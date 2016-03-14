@@ -32,7 +32,6 @@ REVISION HISTORY:
 #include <apc_robot/apc_robot_grippers.h>
 
 // Service messages
-#include <ice_msgs/getState.h>
 #include <pr2_controllers_msgs/JointTrajectoryAction.h>
 #include <pr2_mechanism_msgs/SwitchController.h>
 #include <pr2_mechanism_msgs/ListControllers.h>
@@ -49,7 +48,7 @@ public:
 	    FAILURE
 	  };
 
-	PR2Manager();
+	PR2Manager(std::string arm_ctrl_new);
 	~PR2Manager();
 
 	void robotInit(	bool open_grippers=true);
@@ -60,7 +59,6 @@ public:
 	void closeGrippers();
 
 	void printState();
-	bool get_State_(ice_msgs::getState * currentState);
 
 	void switchControllers(const std::vector<std::string>& start_controllers, const std::vector<std::string>& stop_controllers);
 	PR2Manager::ControlState controllerState(std::string name);
@@ -83,9 +81,12 @@ private:
 	pr2_controllers_msgs::JointTrajectoryGoal leftArmStartPosition();
 	pr2_controllers_msgs::JointTrajectoryGoal rightArmStartPosition();
 
-	static std::string RIGHT_ARM_CONTROLLER;
-	static std::string LEFT_ARM_CONTROLLER;
-	static std::string PR2_CARTPULL_CONTROLLER;
+//	static std::string RIGHT_ARM_CONTROLLER;
+//	static std::string LEFT_ARM_CONTROLLER;
+//	static std::string PR2_CARTPULL_CONTROLLER;
+
+	std::string arm_ctrl_default_;
+	std::string arm_ctrl_new_;
 
 	ros::ServiceClient srv_reinitCtrl;
 
