@@ -78,8 +78,8 @@ target_link_libraries(  apc_arms_cartesian        ${catkin_LIBRARIES})
 add_library(            apc_arms_joint          src/apc_arms_joint.cpp)
 target_link_libraries(  apc_arms_joint          ${catkin_LIBRARIES})
 
-#add_library(            apc_robot_moveit        src/apc_robot_moveit.cpp)
-#target_link_libraries(  apc_robot_moveit        ${catkin_LIBRARIES})
+add_library(            apc_robot_moveit        src/apc_robot_moveit.cpp)
+target_link_libraries(  apc_robot_moveit        ${catkin_LIBRARIES})
 
 add_library(            apc_robot_grippers      src/apc_robot_grippers.cpp)
 add_dependencies(       apc_robot_grippers   	apc_msgs_generate_messages_cpp)

@@ -22,16 +22,10 @@ RobotMoveit::RobotMoveit()
 	kinematic_state = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model));
 	kinematic_state->setToDefaultValues();
 
-	// Indigo
-	//joint_names_right_arm = kinematic_state->getJointModelGroup("right_arm")->getActiveJointModelNames();
-	//joint_names_left_arm  = kinematic_state->getJointModelGroup("left_arm")->getActiveJointModelNames();
+	// Get arm names
+	joint_names_right_arm = kinematic_state->getJointModelGroup("right_arm")->getActiveJointModelNames();
+	joint_names_left_arm  = kinematic_state->getJointModelGroup("left_arm")->getActiveJointModelNames();
 	
-	// Groovy
-	joint_state_group_right_arm = kinematic_state->getJointStateGroup("right_arm");
-	joint_state_group_left_arm = kinematic_state->getJointStateGroup("left_arm");
-	joint_names_right_arm = joint_state_group_right_arm->getJointModelGroup()->getJointModelNames();
-	joint_names_left_arm = joint_state_group_left_arm->getJointModelGroup()->getJointModelNames();
-
 	// Move Group Interface
 	ROS_INFO("RobotMoveit - planning_interface init");
 	group_left_arm  = new moveit::planning_interface::MoveGroup("left_arm");		// TODO Gets stuck here without move_group.launch
@@ -239,16 +233,10 @@ bool RobotMoveit::moveToPose(RobotMoveit::WhichArm arm, std::string pose_name, b
 
 bool RobotMoveit::getKinematicModelJointValues(std::vector<double> joint_values_left_arm, std::vector<double> joint_values_right_arm)
 {
-
-      // Indigo
-	  //kinematic_state->copyJointGroupPositions("right_arm", joint_values_right_arm);
-	  //kinematic_state->copyJointGroupPositions("left_arm", joint_values_left_arm);
+      // Get joint values
+	  kinematic_state->copyJointGroupPositions("right_arm", joint_values_right_arm);
+	  kinematic_state->copyJointGroupPositions("left_arm", joint_values_left_arm);
 	  
-	  // Groovy
-      joint_state_group_right_arm->getVariableValues(joint_values_right_arm);
-	  joint_state_group_left_arm->getVariableValues(joint_values_left_arm);
-
-
 	  /* Print joint names and values */
 	  for(std::size_t i = 0; i < joint_names_right_arm.size(); ++i)
 	  {
@@ -266,14 +254,9 @@ bool RobotMoveit::getKinematicModelJointValues(std::vector<double> joint_values_
 bool RobotMoveit::setKinematicModelJointValues(std::vector<double> joint_values_left_arm, std::vector<double> joint_values_right_arm)
 {
 
-    // Indigo
-	//kinematic_state->setJointGroupPositions("right_arm", joint_values_right_arm);
-	//kinematic_state->setJointGroupPositions("left_arm", joint_values_left_arm);
-	
-	// Groovy
-	joint_state_group_right_arm->setVariableValues(joint_values_right_arm);
-	joint_state_group_left_arm->setVariableValues(joint_values_left_arm);
-
+	// Get joint values
+	kinematic_state->setJointGroupPositions("right_arm", joint_values_right_arm);
+	kinematic_state->setJointGroupPositions("left_arm", joint_values_left_arm);
 
 	// Check joint limits
 	if(kinematic_state->satisfiesBounds())

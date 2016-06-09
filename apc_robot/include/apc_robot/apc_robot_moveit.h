@@ -135,15 +135,7 @@ private:
       false: arm is not in motion
 	 */
 	bool rightMotionInProgress;
-	// Groovy
-	/*!
-	  Moveit class representing the current state of the right arm
-	 */
-	robot_state::JointStateGroup* joint_state_group_right_arm;
-	/*!
-	  Moveit class representing the current state of the left arm
-	 */
-	robot_state::JointStateGroup* joint_state_group_left_arm;
+
 public:
 	//! An enumerated type
 	/*! Allows for easy description of arm selection throughout the class. */
