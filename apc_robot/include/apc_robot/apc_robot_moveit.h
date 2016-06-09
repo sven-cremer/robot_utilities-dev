@@ -82,6 +82,18 @@ private:
 	 */
 	ros::NodeHandle nh;
 	/*!
+      std::string containing name of joint states topic
+	 */
+	std::string joint_states;
+	/*!
+      std::string containing name of move group for the left arm
+	 */
+	std::string move_group_left;
+	/*!
+      std::string containing name of move group for the right arm
+	 */
+	std::string move_group_right;
+	/*!
       std::vector<double> containing current joint positions for the left arm
 	 */
 	std::vector<double> joint_pos_left_arm;

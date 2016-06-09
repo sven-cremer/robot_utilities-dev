@@ -14,8 +14,32 @@
 
 RobotMoveit::RobotMoveit()
 {
+	ROS_INFO("RobotMoveit::RobotMoveit - Initializing");
+
+	// Load robot name from parameter server
+	std::string robot = "pr2";
+	if(!(nh.getParam("/apc_robot/robot", robot)))
+		ROS_WARN("Robot name not found! Using defaulft (%s)!", robot.c_str());
+
+	// Load joint states topic name
+	std::string param_joint_states  = "/apc_robot/"+robot+"/joint_states";
+	joint_states = "/joint_states";
+	if(!(nh.getParam(param_joint_states,  joint_states)))
+		ROS_WARN("Name for joint states not found! Using defaulft (%s)!", joint_states.c_str());
+
+	// Load move group names
+	std::string param_left  = "/apc_robot/"+robot+"/move_group_left";
+	std::string param_right = "/apc_robot/"+robot+"/move_group_right";
+	move_group_left  = "left_arm";
+	move_group_right = "right_arm";
+
+	if(!(nh.getParam(param_left,  move_group_left)))
+		ROS_WARN("Name for left move group not found! Using defaulft (%s)!", move_group_left.c_str());
+
+	if(!(nh.getParam(param_right, move_group_right)))
+		ROS_WARN("Name for right move group not found! Using defaulft (%s)!", move_group_right.c_str());
+
 	// Kinematics
-	ROS_INFO("RobotMoveit - kinematic_state init");
 	robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
 	kinematic_model = robot_model::RobotModelPtr(robot_model_loader.getModel());
 
@@ -23,13 +47,12 @@ RobotMoveit::RobotMoveit()
 	kinematic_state->setToDefaultValues();
 
 	// Get arm names
-	joint_names_right_arm = kinematic_state->getJointModelGroup("right_arm")->getActiveJointModelNames();
-	joint_names_left_arm  = kinematic_state->getJointModelGroup("left_arm")->getActiveJointModelNames();
+	joint_names_right_arm = kinematic_state->getJointModelGroup(move_group_right)->getActiveJointModelNames();
+	joint_names_left_arm  = kinematic_state->getJointModelGroup(move_group_left)->getActiveJointModelNames();
 	
 	// Move Group Interface
-	ROS_INFO("RobotMoveit - planning_interface init");
-	group_left_arm  = new moveit::planning_interface::MoveGroup("left_arm");		// TODO Gets stuck here without move_group.launch
-	group_right_arm = new moveit::planning_interface::MoveGroup("right_arm");
+	group_left_arm  = new moveit::planning_interface::MoveGroup(move_group_left);		// TODO Gets stuck here without move_group.launch
+	group_right_arm = new moveit::planning_interface::MoveGroup(move_group_right);
 
 	// Set planners
 	group_left_arm->setPlannerId("RRTConnectkConfigDefault");
@@ -37,13 +60,14 @@ RobotMoveit::RobotMoveit()
 
 	group_right_arm->setPlannerId("RRTConnectkConfigDefault");
 	group_right_arm->setPlanningTime(15);
-//
-	group_left_arm->setGoalOrientationTolerance(0.1);
-//
-	group_right_arm->setGoalOrientationTolerance(0.1);
-	group_right_arm->setGoalJointTolerance(0.1);
-	group_right_arm->setGoalPositionTolerance(0.1);
-	group_right_arm->setGoalTolerance(0.1);
+
+	// Set tolerances
+	double tol = 0.10;
+	group_left_arm ->setGoalOrientationTolerance(tol);
+	group_right_arm->setGoalOrientationTolerance(tol);
+	group_right_arm->setGoalJointTolerance(tol);
+	group_right_arm->setGoalPositionTolerance(tol);
+	group_right_arm->setGoalTolerance(tol);
 
 	joint_pos_right_arm.resize(joint_names_right_arm.size());
 	joint_pos_left_arm.resize(joint_names_left_arm.size());
@@ -51,14 +75,12 @@ RobotMoveit::RobotMoveit()
 	leftMotionInProgress = false;
 	rightMotionInProgress = false;
 
-	// Check if /joint_states is remapped to /robot/joint_states
-	ROS_INFO("RobotMoveit - checking if /joint_states is publishing");
-	sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states",ros::Duration(1,0));
+	// Check if joint_states is being published
+	ROS_INFO("Checking if /joint_states is publishing...");
+	sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>(joint_states,ros::Duration(1,0));
 	if (msg == NULL)
-	{
-		ROS_ERROR("Remap /joint_states to /robot/joint_states for getCurrentJointValues() to work!");
-		ROS_ERROR("Do this inside a launch file or pass '/joint_states:=/robot/joint_states' as a function argument.");
-	}
+		ROS_ERROR("Could not detect a %s topic!",joint_states.c_str());
+
 
 	ROS_INFO("*** Initialized RobotMoveit class ***");
 }
