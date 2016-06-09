@@ -18,5 +18,6 @@ First modify the configuration file located in /config/circular_trajectory.yaml.
 ## Running
 To load the parameters and launch the server, 
 ```
-roslaunch trajectory_planner circular_trajectory.launch 
+roslaunch trajectory_planner circular_trajectory.launch
+rosservice call /get_circular_trajectory "{}" 
 ```
