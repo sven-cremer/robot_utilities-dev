@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES #apc_robot_grippers pr2_head pr2_torso apc_arms_cartesian pr2_base apc_arms_joint #apc_robot_moveit
+  LIBRARIES #cirular_trajectoryLib
   CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs sensor_msgs control_msgs actionlib tf visualization_msgs apc_msgs
 #  DEPENDS system_lib
 )
@@ -41,9 +41,9 @@ include_directories(
 )
 
 ## Executables
-add_executable(         cirular_trajectory       	src/circle_trajectory.cpp)
-target_link_libraries(  cirular_trajectory   		 	${catkin_LIBRARIES})
-#add_dependencies(       cirular_trajectory       move_base_msgs_generate_messages_cpp apc_msgs_generate_messages_cpp)
+add_executable(         cirular_trajectory       src/circle_trajectory.cpp)
+target_link_libraries(  cirular_trajectory   	 ${catkin_LIBRARIES})
+add_dependencies(       cirular_trajectory       ${catkin_EXPORTED_TARGETS})
 
 #############
 ## Install ##
@@ -53,7 +53,7 @@ target_link_libraries(  cirular_trajectory   		 	${catkin_LIBRARIES})
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS #apc_robot_grippers pr2_torso pr2_head apc_arms_cartesian pr2_base apc_arms_joint #apc_robot_moveit
+install(TARGETS cirular_trajectory
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
