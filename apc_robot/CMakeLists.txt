@@ -111,8 +111,8 @@ add_executable(         grippers     src/apc_robot_grippers.cpp)
 add_dependencies(       grippers   	apc_msgs_generate_messages_cpp)
 target_link_libraries(  grippers     ${catkin_LIBRARIES})
 
-#add_executable(         testing_node           src/testing/testing_node.cpp)
-#target_link_libraries(  testing_node           apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+add_executable(         testing_node           src/testing/testing_node.cpp)
+target_link_libraries(  testing_node           apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 #add_executable(         origin_camera_tf_publisher  src/origin_camera_tf_publisher.cpp)
 #target_link_libraries(  origin_camera_tf_publisher  ${catkin_LIBRARIES})
@@ -123,8 +123,8 @@ target_link_libraries(  grippers     ${catkin_LIBRARIES})
 #add_executable(         kinecthand_tf_publisher  src/kinect_tf_publisher.cpp)
 #target_link_libraries(  kinecthand_tf_publisher  ${catkin_LIBRARIES})
 
-#add_library(            apc_robot_commander     src/apc_robot_commander.cpp)
-#target_link_libraries(  apc_robot_commander     apc_robot_moveit apc_robot_grippers ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+add_library(            apc_baxter_commander     src/apc_baxter_commander.cpp)
+target_link_libraries(  apc_baxter_commander     apc_robot_moveit apc_robot_grippers ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 #add_executable(movegroup_test src/testing/movegroup_test.cpp)
 #target_link_libraries(movegroup_test ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
@@ -135,8 +135,8 @@ target_link_libraries(  grippers     ${catkin_LIBRARIES})
 #add_executable(         test_video_demo        src/testing/test_video_demo.cpp)
 #target_link_libraries(  test_video_demo        apc_robot_grippers apc_robot_moveit apc_robot_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
-#add_executable(         cartesian_path         src/testing/cartesian_path.cpp)
-#target_link_libraries(  cartesian_path         apc_robot_moveit apc_robot_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+add_executable(         cartesian_path         src/testing/cartesian_path.cpp)
+target_link_libraries(  cartesian_path         apc_robot_moveit apc_baxter_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 #add_executable(         pickandplace           src/testing/pickandplace.cpp)
 #target_link_libraries(  pickandplace           apc_robot_grippers apc_robot_moveit apc_robot_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})

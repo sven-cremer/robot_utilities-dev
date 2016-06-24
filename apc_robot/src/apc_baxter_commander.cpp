@@ -18,7 +18,7 @@
 
 
 
-#include <apc_baxter/apc_baxter_commander.h>
+#include <apc_robot/apc_baxter_commander.h>
 
 
 BaxterCommander::BaxterCommander()

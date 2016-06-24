@@ -9,8 +9,8 @@
  */
 
 
-#include <apc_baxter/apc_baxter_commander.h>
-#include "../../include/apc_baxter/apc_robot_moveit.h"
+//#include <apc_robot/apc_baxter_commander.h>
+#include <apc_robot/apc_robot_moveit.h>
 
 
 /***********************************************************************************************************************
@@ -28,22 +28,26 @@ int main(int argc, char **argv)
   spinner.start();
 
   RobotMoveit baxter_moveit;
-  BaxterCommander baxter_commander;
+//  BaxterCommander baxter_commander;
 
 
-  if(!baxter_commander.enableRobot())
-  {
-	  ROS_ERROR("main: Robot could not be enabled!");
-  }
-  {
-	  ROS_INFO("Enabled robot!");
-  }
+//  if(!baxter_commander.enableRobot())
+//  {
+//	  ROS_ERROR("main: Robot could not be enabled!");
+//  }
+//  else
+//  {
+//	  ROS_INFO("Enabled robot!");
+//  }
 
-  sleep(0.1);
+  sleep(1.0);
 
-//  /* Move to neutral pose */
-//  baxter_moveit.moveToPose(BaxterMoveit::RIGHT,"right_neutral");
-//  baxter_moveit.moveToPose(BaxterMoveit::LEFT,"left_neutral");
+  /* Move to neutral pose */
+//  baxter_moveit.moveToPose(RobotMoveit::RIGHT,"right_neutral");
+//  baxter_moveit.moveToPose(RobotMoveit::LEFT,"left_neutral");
+
+  std::cout<<"Moving to neutral pose...\n";
+  sleep(1.0);
 
   std::vector<geometry_msgs::Pose> waypoints;
   geometry_msgs::Pose target_pose;
@@ -59,6 +63,9 @@ int main(int argc, char **argv)
 
   baxter_moveit.executeCarteGoal(RobotMoveit::RIGHT, target_pose);
 
+  std::cout<<"Moving to start pose...\n";
+  sleep(2.0);
+
   /* Cartesian path */
   int N = 8;
   double h_close = 0.08;
@@ -69,8 +76,9 @@ int main(int argc, char **argv)
   std::cout<<"Height: "<< h_paper <<"\n";
 
   // Get starting position
-  baxter_moveit.getEndeffectorPose(RobotMoveit::RIGHT,&target_pose);
-  waypoints.push_back(target_pose);
+//  baxter_moveit.getEndeffectorPose(RobotMoveit::RIGHT,&target_pose);
+//  std::cout<<target_pose<<"\n---\n";
+//  waypoints.push_back(target_pose);
 
   // bottom-right
   target_pose.position.z = h_close;
