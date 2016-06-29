@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+
+ 
+  <node name="StateMachine_Node" pkg="apc_sm" type="StateMachine_Node" output="screen">
+	<remap from="/joint_states" to="/robot/joint_states" />
+  </node>
+   
+</launch>
