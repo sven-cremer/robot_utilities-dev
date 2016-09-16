@@ -64,52 +64,52 @@ namespace sm
         {
             // every (optional) entry/exit methods get the event passed.
             template <class Event,class FSM>
-            void on_entry(Event const&,FSM& ) {std::cout << "entering: Empty" << std::endl;}
+            void on_entry(Event const&,FSM& ) {std::cout << "\n entering: Empty" << std::endl;}
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: Empty" << std::endl;}
+            void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Empty" << std::endl;}
         };
         struct Waiting : public msm::front::state<>
         {
             template <class Event,class FSM>
-            void on_entry(Event const& ,FSM&) {std::cout << "entering: Waiting" << std::endl;}
+            void on_entry(Event const& ,FSM&) {std::cout << "\n entering: Waiting" << std::endl;}
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: Waiting" << std::endl;}
+            void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Waiting" << std::endl;}
         };
 
         // sm_ptr still supported but deprecated as functors are a much better way to do the same thing
-        struct Picking : public msm::front::state<msm::front::default_base_state,msm::front::sm_ptr>
+        struct Picking : public msm::front::state<>
         {
             template <class Event,class FSM>
-            void on_entry(Event const& ,FSM&) {std::cout << "entering: Picking" << std::endl;}
+            void on_entry(Event const& ,FSM&) {std::cout << "\n entering: Picking" << std::endl;}
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: Picking" << std::endl;}
-            void set_sm_ptr(pickupMachine_* pl)
+            void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Picking" << std::endl;}
+            /*void set_sm_ptr(pickupMachine_* pl)
             {
                 m_pickupMachine=pl;
             }
-            pickupMachine_* m_pickupMachine;
+            pickupMachine_* m_pickupMachine;*/
         };
 
         struct Failure : public msm::front::state<> {
 		  template <class Event,class FSM>
-		  void on_entry(Event const& ,FSM&) {std::cout << "entering: Failure" << std::endl;}
+		  void on_entry(Event const& ,FSM&) {std::cout << "\n entering: Failure" << std::endl;}
 		  template <class Event,class FSM>
-		  void on_exit(Event const&,FSM& ) {std::cout << "leaving: Failure" << std::endl;}
+		  void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Failure" << std::endl;}
 	    };
 
         struct Placing : public msm::front::state<> {
 		  template <class Event,class FSM>
-		  void on_entry(Event const& ,FSM&) {std::cout << "entering: Placing" << std::endl;}
+		  void on_entry(Event const& ,FSM&) {std::cout << "\n entering: Placing" << std::endl;}
 		  template <class Event,class FSM>
-		  void on_exit(Event const&,FSM& ) {std::cout << "leaving: Placing" << std::endl;}
+		  void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Placing" << std::endl;}
 		};
 
         struct Navigating : public msm::front::state<>
         {
             template <class Event,class FSM>
-            void on_entry(Event const&,FSM& ) {std::cout << "entering: Navigating" << std::endl;}
+            void on_entry(Event const&,FSM& ) {std::cout << "\n entering: Navigating" << std::endl;}
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: Navigating" << std::endl;}
+            void on_exit(Event const&,FSM& ) {std::cout << "\n leaving: Navigating" << std::endl;}
         };
 
         // state not defining any entry or exit
@@ -128,7 +128,7 @@ namespace sm
         void placeObject(place const&)        { std::cout << "pickupMachine::placeObject\n"; }
         void goHome(navigate const&)      { std::cout << "pickupMachine::goHome\n"; }
         void reportFailure(error const&)      { std::cout << "pickupMachine::reportFailure\n"; }
-        void initializeRobot(activate const&) {std::cout<<"pickupMachine::initializeRobot";}
+        void initializeRobot(activate const&) {std::cout<<"pickupMachine::initializeRobot\n";}
         // guard conditions
         bool isObjectFound(pick const& evt)
         {
@@ -137,6 +137,8 @@ namespace sm
             {
                 std::cout << "Object not found, sorry" << std::endl;
                 return false;
+            } else {
+            	std::cout<< "Object found"<<std::endl;
             }
             return true;
         }
@@ -184,35 +186,12 @@ namespace sm
     //
     // Testing utilities.
     //
-    static char const* const state_names[] = { "Waiting", "Navigating", "Empty", "Placing", "Picking", "Failure" };
+    static char const* const state_names[] = { "Picking", "Placing", "Empty", "Waiting", "Navigating",   "Failure" };
     void pstate(pickupMachine const& p)
     {
+    	std::cout << " -> " <<p.current_state()[0] << std::endl;
         std::cout << " -> " << state_names[p.current_state()[0]] << std::endl;
     }
 
-    /*void test()
-    {
-		player p;
-        // needed to start the highest-level SM. This will call on_entry and mark the start of the SM
-        p.start();
-        // go to Open, call on_exit on Empty, then action, then on_entry on Open
-        p.process_event(open_close()); pstate(p);
-        p.process_event(open_close()); pstate(p);
-        // will be rejected, wrong disk type
-        p.process_event(cd_detected("louie, louie",DISK_DVD)); pstate(p);
-        p.process_event(cd_detected("louie, louie",DISK_CD)); pstate(p);
-		p.process_event(play());
 
-        // at this point, Play is active
-        p.process_event(pause()); pstate(p);
-        // go back to Playing
-        p.process_event(end_pause());  pstate(p);
-        p.process_event(pause()); pstate(p);
-        p.process_event(stop());  pstate(p);
-        // event leading to the same state
-        // no action method called as it is not present in the transition table
-        p.process_event(stop());  pstate(p);
-        std::cout << "stop fsm" << std::endl;
-        p.stop();
-    }*/
 }

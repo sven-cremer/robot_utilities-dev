@@ -31,12 +31,15 @@ int main(int argc, char **argv) {
 		pstate(p);
 		p.process_event(activate());
 		pstate(p);
-		/*p.process_event(navigate());
+		p.process_event(navigate());
 		pstate(p);
 		p.process_event(pick("water", BOTTLE));
 		p.process_event(pick("drink", COKE));
-
-		std::cout << "stop fsm" << std::endl;*/
+		p.process_event(navigate());
+		p.process_event(place());
+		p.process_event(navigate());
+		p.process_event(sm::wait());
+		std::cout << "stop fsm" << std::endl;
 		p.stop();
 
 		chatter_pub.publish(msg);
