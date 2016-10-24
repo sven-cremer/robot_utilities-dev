@@ -62,12 +62,12 @@ RobotMoveit::RobotMoveit()
 	group_right_arm->setPlanningTime(15);
 
 	// Set tolerances
-	double tol = 0.10;
-	group_left_arm ->setGoalOrientationTolerance(tol);
-	group_right_arm->setGoalOrientationTolerance(tol);
-	group_right_arm->setGoalJointTolerance(tol);
-	group_right_arm->setGoalPositionTolerance(tol);
-	group_right_arm->setGoalTolerance(tol);
+//	double tol = 0.10;
+//	group_left_arm ->setGoalOrientationTolerance(tol);
+//	group_right_arm->setGoalOrientationTolerance(tol);
+//	group_right_arm->setGoalJointTolerance(tol);
+//	group_right_arm->setGoalPositionTolerance(tol);
+//	group_right_arm->setGoalTolerance(tol);
 
 	joint_pos_right_arm.resize(joint_names_right_arm.size());
 	joint_pos_left_arm.resize(joint_names_left_arm.size());
@@ -76,7 +76,7 @@ RobotMoveit::RobotMoveit()
 	rightMotionInProgress = false;
 
 	// Check if joint_states is being published
-	ROS_INFO("Checking if /joint_states is publishing...");
+	ROS_INFO("Checking if %s is publishing...",joint_states.c_str());
 	sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>(joint_states,ros::Duration(1,0));
 	if (msg == NULL)
 		ROS_ERROR("Could not detect a %s topic!",joint_states.c_str());
