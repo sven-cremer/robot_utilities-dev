@@ -62,6 +62,8 @@
 #include <apc_msgs/JTCartesianControllerState.h>
 #include <tf/transform_listener.h>
 
+#include<string>
+
 //Services
 #include <apc_msgs/SetGain.h>
 
@@ -207,7 +209,7 @@ public:
 	\return True upon successful arm movement to position
 	\sa ArmsCartesian(), ~ArmsCartesian(), moveInDirection(), getCurrentPose()
 	 */
-	bool moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose, bool waitForMotion = true);
+	bool moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose, std::string frame_id, bool waitForMotion = true);
 	//! Moves specified arm into a given Cartesian position, Cartesian direction, distance, increment of movement and in the amount of time given
 	/*!
 	\param arm an enumerated type
@@ -219,7 +221,7 @@ public:
 	\return True upon successful arm movement to position
 	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), getCurrentPose()
 	 */
-	bool moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt);
+	bool moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt, std::string frame_id);
 	//! Moves specified arm into a given Cartesian position, Cartesian direction, distance, increment of movement and in the amount of time given
 	/*!
 	\param arm an enumerated type
@@ -228,6 +230,31 @@ public:
 	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), getCurrentPose()
 	 */
 	bool moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::PoseStamped& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt);
+
+
+	// Cody functions
+//	//! Moves specified arm into a given Cartesian position, Cartesian direction, distance, Absolute position of movement and in the amount of time given
+//	/*!
+//	\param arm an enumerated type
+//	\param gripperPose is a geometry_msgs::Pose
+//	\param d an enumerated type
+//	\param distance is a double
+//	\param dx is a double
+//	\param dt is a double
+//	\return True upon successful arm movement to position
+//	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), getCurrentPose()
+//	 */
+//	bool moveInDirectionAbsolute(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt, std::string frame_id);
+//
+//	//! Moves specified arm into a given Cartesian position, Cartesian direction, distance, increment of movement and in the amount of time given
+//	/*!
+//	\param arm an enumerated type
+//	\param gripperPose is a geometry_msgs::PoseStamped
+//	\return True upon successful arm movement to position
+//	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), getCurrentPose()
+//	 */
+//	bool moveInDirectionAbsolute(ArmsCartesian::WhichArm arm, geometry_msgs::PoseStamped& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt);
+
 	//! Gets the current position of the specified arm
 	/*!
 	\param arm an enumerated type
