@@ -29,6 +29,8 @@ Base::Base()
     else
     	ROS_INFO(" Connected to move_base server!");
 
+    pub_initial_pose_ = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
+
     ROS_INFO("Base::Base - Done!");
 }
 /***********************************************************************************************************************
@@ -57,6 +59,35 @@ Send twist command for turning
 //
 //	cmd_vel_pub.publish(geometry_msgs::Twist());	// Reset topic values
 //}
+
+void Base::setInitialPose(double x, double y, double w)
+{
+	geometry_msgs::PoseWithCovarianceStamped p;
+	p.header.seq = 0;
+	p.header.stamp = ros::Time::now();
+	p.header.frame_id = "map";
+	p.pose.pose.position.x = x;
+	p.pose.pose.position.y = y;
+	p.pose.pose.position.z = 0.0;
+
+	// Low probability
+	//p.pose.covariance[0] = 0.25;
+	//p.pose.covariance[7] = 0.25;
+	//p.pose.covariance[35] = 0.0685;
+
+	// High probability
+	//p.pose.covariance[0]  = 0.03;
+	//p.pose.covariance[1]  = -0.001;
+	//p.pose.covariance[6]  = -0.001;
+	//p.pose.covariance[7]  = 0.03;
+	//p.pose.covariance[35] = 0.005;
+
+	tf::Quaternion quat = tf::createQuaternionFromYaw(w);
+	tf::quaternionTFToMsg(quat, p.pose.pose.orientation);
+
+	pub_initial_pose_.publish(p);
+}
+
 /***********************************************************************************************************************
 Send base command for turning
 ***********************************************************************************************************************/
