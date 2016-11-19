@@ -57,11 +57,11 @@ void ArmsCartesian::loadGainParameters(){
 
 		std::string zone = "/gain_" +  boost::lexical_cast<std::string>(i+1);
 
-		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_p", gain_tmp.t_p))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_d", gain_tmp.t_d))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_p", gain_tmp.r_p))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_d", gain_tmp.r_d))) {ROS_ERROR("Parameter Not found.");}
+		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/t_p",  gain_tmp.t_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/t_d",  gain_tmp.t_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/r_p",  gain_tmp.r_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/r_d",  gain_tmp.r_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
 
 		gains.push_back(gain_tmp);
 	}
