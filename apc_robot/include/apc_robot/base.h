@@ -49,6 +49,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <tf/transform_datatypes.h>
@@ -65,6 +66,10 @@ private:
       ROS Handle
 	 */
 	ros::NodeHandle nh;
+	/*!
+      ROS publisher
+	 */
+	ros::Publisher pub_initial_pose_;
 	/*!
       MoveBaseClient navigation client
 	 */
@@ -91,6 +96,15 @@ public:
 	 Deconstructer
 	 */
 	~Base();
+	//! Sets initial robot pose in the map frame
+	/*!
+	 \param x a double
+	 \param y a double
+	 \param w a double
+	 \param frame a std::string
+	 \sa setInitialPose()
+	 */
+	void setInitialPose(double x, double y, double w);
 	//! Sends position goal to action client given a tf frame
 	/*!
 	 \param x a double
