@@ -31,6 +31,8 @@ void TrajectoryGenerator::initGrid( int Nx, int Ny,
 									double dx, double dy,
                                     geometry_msgs::Point origin)
 {
+	grid_.clear();
+
 	char alphabet = 'A';
 	numPoints = 0;
 	geometry_msgs::Point p = origin;
