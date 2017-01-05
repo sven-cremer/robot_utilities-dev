@@ -57,11 +57,11 @@ void ArmsCartesian::loadGainParameters(){
 
 		std::string zone = "/gain_" +  boost::lexical_cast<std::string>(i+1);
 
-		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_p", gain_tmp.t_p))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_d", gain_tmp.t_d))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_p", gain_tmp.r_p))) {ROS_ERROR("Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_d", gain_tmp.r_d))) {ROS_ERROR("Parameter Not found.");}
+		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/t_p",  gain_tmp.t_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/t_d",  gain_tmp.t_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/r_p",  gain_tmp.r_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/r_d",  gain_tmp.r_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
 
 		gains.push_back(gain_tmp);
 	}
@@ -292,11 +292,12 @@ bool ArmsCartesian::setGains(apc_msgs::SetGain::Request &req, apc_msgs::SetGain:
 	return false;
 }
 
-bool ArmsCartesian::moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose cmd, bool waitForMotion)
+bool ArmsCartesian::moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose cmd, std::string frame_id, bool waitForMotion)
 {
 
 	geometry_msgs::PoseStamped cmd_stamped;
-	cmd_stamped.header.frame_id = "base_link";
+//	cmd_stamped.header.frame_id = "base_link";
+	cmd_stamped.header.frame_id = frame_id;
 	cmd_stamped.header.stamp = ros::Time::now();
 	cmd_stamped.pose = cmd;
 
@@ -344,11 +345,12 @@ bool ArmsCartesian::moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose 
 	return true;
 }
 
-bool ArmsCartesian::moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt)
+bool ArmsCartesian::moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt, std::string frame_id)
 {
 	geometry_msgs::PoseStamped tmp;
 	tmp.pose = gripperPose;
-	tmp.header.frame_id = "base_link";
+//	tmp.header.frame_id = "base_link";
+	tmp.header.frame_id = frame_id;
 	bool result = moveInDirection(arm, tmp, d, distance, dx, dt);
 	gripperPose = tmp.pose;
 	return result;
@@ -380,7 +382,7 @@ bool ArmsCartesian::moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::
 //		return false;
 //	}
 
-	// Make sure distanceis postive and set the direction (-1 or 1)
+	// Make sure distance is positive and set the direction (-1 or 1)
 	double direction = 1;
 	if(distance<0)
 	{
@@ -435,6 +437,108 @@ bool ArmsCartesian::moveInDirection(ArmsCartesian::WhichArm arm, geometry_msgs::
 	//ROS_INFO("ArmsCartesian::moveInDirection - done");
 	return true;
 }
+
+// cody Functions
+//bool ArmsCartesian::moveInDirectionAbsolute(ArmsCartesian::WhichArm arm, geometry_msgs::Pose& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt, std::string frame_id)
+//{
+//	geometry_msgs::PoseStamped tmp;
+//	tmp.pose = gripperPose;
+////	tmp.header.frame_id = "base_link";
+//	tmp.header.frame_id = frame_id;
+//	bool result = moveInDirectionAbsolute(arm, tmp, d, distance, dx, dt);
+//	gripperPose = tmp.pose;
+//	return result;
+//}
+//
+//bool ArmsCartesian::moveInDirectionAbsolute(ArmsCartesian::WhichArm arm, geometry_msgs::PoseStamped& gripperPose, ArmsCartesian::Direction d, double distance, double dx, double dt)
+//{
+//	//ROS_INFO("ArmsCartesian::moveInDirection - start");
+//	ros::Publisher* pubPtr;
+//	switch(arm)
+//	{
+//	case ArmsCartesian::LEFT:
+//		leftMotionInProgress = true;
+//		pubPtr = &lCartPub;
+//		break;
+//	case ArmsCartesian::RIGHT:
+//		rightMotionInProgress = true;
+//		pubPtr = &rCartPub;
+//		break;
+//	default:
+//		ROS_ERROR("ArmsCartesian::moveInDirection - Received faulty arm argument!");
+//		return false;
+//	}
+//
+//	// Get current gripper pose	- this introduce an error
+////	geometry_msgs::PoseStamped gripperPose;
+////	if( !getCurrentPose(arm,gripperPose) )
+////	{
+////		ROS_ERROR("ArmsCartesian::moveInDirection - Could not get gripper pose!");
+////		return false;
+////	}
+//
+//	// Make sure distance is positive and set the direction (-1 or 1)
+//	double direction = 1;
+//	if(distance<0)
+//	{
+//		direction = -1;
+//		distance = - distance;
+//	}
+//	double traveled = 0;
+//	double step = dx;
+//	geometry_msgs::PoseStamped CurrentPose;
+//
+//	// Loop until distance has been traveled
+//	bool goalReached = false;
+//	while(!goalReached)
+//	{
+////		ArmsCartesian::getCurrentPose( )
+//		if	( getCurrentPose(arm, CurrentPose, ) )
+//		{
+//
+//		}
+//
+//		if( (traveled+step) > distance )
+//			step = distance-traveled;
+//
+//		switch(d)
+//		{
+//		case ArmsCartesian::X:
+//			gripperPose.pose.position.x += step*direction;
+//			break;
+//		case ArmsCartesian::Y:
+//			gripperPose.pose.position.y += step*direction;
+//			break;
+//		case ArmsCartesian::Z:
+//			gripperPose.pose.position.z += step*direction;
+//			break;
+//		default:
+//			ROS_ERROR("ArmsCartesian::moveInDirection - Received faulty direction argument!");
+//			return false;
+//		}
+//
+//		traveled += step;
+//		gripperPose.header.seq = (gripperPose.header.seq+1)%255;
+//		gripperPose.header.stamp = ros::Time::now();
+//
+//		pubPtr->publish(gripperPose);
+//		ros::Duration(dt).sleep();
+//
+//		if(traveled >= distance)
+//			goalReached=true;
+//
+//		//ROS_INFO("Traveled: %f, step: %f, distance: %f",traveled, step*direction, distance);
+//		//ROS_INFO("x: %f, y: %f, z: %f",gripperPose.pose.position.x, gripperPose.pose.position.y, gripperPose.pose.position.z);
+//	}
+//
+//	if(ArmsCartesian::LEFT)
+//		leftMotionInProgress = false;
+//	else
+//		rightMotionInProgress = false;
+//
+//	//ROS_INFO("ArmsCartesian::moveInDirection - done");
+//	return true;
+//}
 
 bool ArmsCartesian::loadCartPose(ArmsCartesian::WhichArm arm, ArmsCartesian::CartPose p, geometry_msgs::PoseStamped& result)
 {

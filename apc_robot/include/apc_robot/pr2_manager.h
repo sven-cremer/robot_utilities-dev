@@ -28,6 +28,7 @@ REVISION HISTORY:
 
 // Motion clients
 #include <apc_robot/apc_arms_joint.h>
+#include <apc_robot/apc_arms_cartesian.h>
 #include <apc_robot/pr2_torso.h>
 #include <apc_robot/apc_robot_grippers.h>
 
@@ -54,12 +55,14 @@ public:
 	    RIGHT
 	  };
 
-	PR2Manager(std::string arm_ctrl_new);
+	PR2Manager(std::string arm_ctrl_new = "");
 	~PR2Manager();
 
 	void robotInit(	bool open_grippers=true);
 	void on(		bool close_grippers=true);
 	void off(		bool open_grippers=true);
+
+	void setTorso(double height);
 
 	void openGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 	void closeGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
@@ -69,6 +72,7 @@ public:
 	void switchControllers(const std::vector<std::string>& start_controllers, const std::vector<std::string>& stop_controllers);
 	PR2Manager::ControlState controllerState(std::string name);
 
+	bool setControllers(const std::vector<std::string> default_controllers, const std::vector<std::string> new_controllers);
 
 private:
 
@@ -77,12 +81,12 @@ private:
 	ros::ServiceClient list_srv_;
 
 	std::vector<std::string> arm_controllers_default;
-	std::vector<std::string> arm_controllers_cart;
+	std::vector<std::string> arm_controllers_new;
 
-//	ArmJointSpaceController arm;
-	Gripper grippers;
-	ArmsJoint arms;
 	Torso torso;
+	Gripper grippers;
+	ArmsJoint arms_joint;
+	//ArmsCartesian arms_cart;
 
 	pr2_controllers_msgs::JointTrajectoryGoal leftArmStartPosition();
 	pr2_controllers_msgs::JointTrajectoryGoal rightArmStartPosition();
@@ -91,10 +95,7 @@ private:
 //	static std::string LEFT_ARM_CONTROLLER;
 //	static std::string PR2_CARTPULL_CONTROLLER;
 
-	std::string arm_ctrl_default_;
-	std::string arm_ctrl_new_;
-
-	ros::ServiceClient srv_reinitCtrl;
+//	ros::ServiceClient srv_reinitCtrl;
 
 };
 

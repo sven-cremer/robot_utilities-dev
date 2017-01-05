@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
   apc_msgs
   move_base_msgs
+  geometric_shapes
   #robot_mechanism_controllers
 )
 
@@ -28,8 +29,8 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES apc_robot_grippers pr2_head pr2_torso apc_arms_cartesian pr2_base apc_arms_joint pr2_manager #apc_robot_moveit
-  CATKIN_DEPENDS geometry_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface roscpp rospy std_msgs sensor_msgs control_msgs actionlib tf visualization_msgs apc_msgs move_base_msgs 
+  LIBRARIES apc_robot_grippers pr2_head pr2_torso apc_arms_cartesian pr2_base apc_arms_joint pr2_manager apc_robot_moveit
+  CATKIN_DEPENDS geometry_msgs geometric_shapes moveit_core moveit_ros_planning moveit_ros_planning_interface roscpp rospy std_msgs sensor_msgs control_msgs actionlib tf visualization_msgs apc_msgs move_base_msgs 
 #  DEPENDS system_lib
 )
 
@@ -61,11 +62,11 @@ target_link_libraries(  origin_tf_publisher  ${catkin_LIBRARIES})
 #add_dependencies(       print_state  		apc_msgs_generate_messages_cpp)
 #target_link_libraries(  print_state       	${catkin_LIBRARIES} )
 
-#add_executable(         print_joint_states       src/print_joint_states.cpp)
-#target_link_libraries(  print_joint_states       apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+add_executable(         print_joint_states       src/print_joint_states.cpp)
+target_link_libraries(  print_joint_states       apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
-#add_executable(         print_cartesian_pose     src/print_cartesian_pose.cpp)
-#target_link_libraries(  print_cartesian_pose     apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+add_executable(         print_cartesian_pose     src/print_cartesian_pose.cpp)
+target_link_libraries(  print_cartesian_pose     apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 add_executable(         apc_arms_joint_node      src/apc_arms_joint.cpp)
 target_link_libraries(  apc_arms_joint_node      ${catkin_LIBRARIES})
@@ -99,7 +100,7 @@ target_link_libraries(  pr2_base                ${catkin_LIBRARIES})
 add_dependencies(       pr2_base                move_base_msgs_generate_messages_cpp)
 
 add_library(            pr2_manager             src/pr2_manager.cpp)
-target_link_libraries(  pr2_manager             pr2_torso apc_arms_joint apc_robot_grippers ${catkin_LIBRARIES})
+target_link_libraries(  pr2_manager             pr2_torso apc_arms_joint apc_robot_grippers apc_arms_cartesian ${catkin_LIBRARIES})
 
 ## Old versions and Tesing
 
@@ -123,8 +124,8 @@ target_link_libraries(  testing_node           apc_robot_moveit ${catkin_LIBRARI
 #add_executable(         kinecthand_tf_publisher  src/kinect_tf_publisher.cpp)
 #target_link_libraries(  kinecthand_tf_publisher  ${catkin_LIBRARIES})
 
-add_library(            apc_baxter_commander     src/apc_baxter_commander.cpp)
-target_link_libraries(  apc_baxter_commander     apc_robot_moveit apc_robot_grippers ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+#add_library(            apc_baxter_commander     src/apc_baxter_commander.cpp)
+#target_link_libraries(  apc_baxter_commander     apc_robot_moveit apc_robot_grippers ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 #add_executable(movegroup_test src/testing/movegroup_test.cpp)
 #target_link_libraries(movegroup_test ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
@@ -135,8 +136,8 @@ target_link_libraries(  apc_baxter_commander     apc_robot_moveit apc_robot_grip
 #add_executable(         test_video_demo        src/testing/test_video_demo.cpp)
 #target_link_libraries(  test_video_demo        apc_robot_grippers apc_robot_moveit apc_robot_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
-add_executable(         cartesian_path         src/testing/cartesian_path.cpp)
-target_link_libraries(  cartesian_path         apc_robot_moveit apc_baxter_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+#add_executable(         cartesian_path         src/testing/cartesian_path.cpp)
+#target_link_libraries(  cartesian_path         apc_robot_moveit apc_baxter_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 #add_executable(         pickandplace           src/testing/pickandplace.cpp)
 #target_link_libraries(  pickandplace           apc_robot_grippers apc_robot_moveit apc_robot_commander ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
@@ -149,7 +150,7 @@ target_link_libraries(  cartesian_path         apc_robot_moveit apc_baxter_comma
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS apc_robot_grippers pr2_torso pr2_head apc_arms_cartesian pr2_base apc_arms_joint pr2_manager #apc_robot_moveit
+install(TARGETS apc_robot_grippers pr2_torso pr2_head apc_arms_cartesian pr2_base apc_arms_joint pr2_manager apc_robot_moveit
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
