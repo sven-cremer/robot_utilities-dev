@@ -58,15 +58,15 @@ add_executable(         origin_tf_publisher  src/origin_tf_publisher.cpp)
 add_dependencies(       origin_tf_publisher  apc_msgs_generate_messages_cpp)
 target_link_libraries(  origin_tf_publisher  ${catkin_LIBRARIES})
 
-#add_executable(         print_state       	src/print_state.cpp )
-#add_dependencies(       print_state  		apc_msgs_generate_messages_cpp)
-#target_link_libraries(  print_state       	${catkin_LIBRARIES} )
+add_executable(         print_state       	src/print_state.cpp )
+add_dependencies(       print_state  		apc_msgs_generate_messages_cpp)
+target_link_libraries(  print_state       	${catkin_LIBRARIES} )
 
-add_executable(         print_joint_states       src/print_joint_states.cpp)
-target_link_libraries(  print_joint_states       apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+#add_executable(         print_joint_states       src/print_joint_states.cpp)
+#target_link_libraries(  print_joint_states       apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
-add_executable(         print_cartesian_pose     src/print_cartesian_pose.cpp)
-target_link_libraries(  print_cartesian_pose     apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
+#add_executable(         print_cartesian_pose     src/print_cartesian_pose.cpp)
+#target_link_libraries(  print_cartesian_pose     apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
 
 add_executable(         apc_arms_joint_node      src/apc_arms_joint.cpp)
 target_link_libraries(  apc_arms_joint_node      ${catkin_LIBRARIES})

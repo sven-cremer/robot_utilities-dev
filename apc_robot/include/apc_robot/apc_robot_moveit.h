@@ -198,6 +198,14 @@ public:
 	 \sa printJointStates(), printJointStatesSRDF(), printJointStatesSRDF()
 	 */
 	bool getEndeffectorPose(RobotMoveit::WhichArm arm, geometry_msgs::Pose* current_pose);
+	//! Gets the end effector pose and header
+	/*!
+	 \param arm is an enumerated type
+	 \param current_pose is geometry_msgs::PoseStamped
+	 \return True if retrieval of end effector pose is successful
+	 \sa printJointStates(), printJointStatesSRDF(), printJointStatesSRDF()
+	 */
+	bool getEndeffectorPoseStamped(RobotMoveit::WhichArm arm, geometry_msgs::PoseStamped* current_pose);
 	//! Move arm to group state specified inside baxter.srdf, which is loaded by planning_context.launch
 	/*!
 	 \param arm is an enumerated type

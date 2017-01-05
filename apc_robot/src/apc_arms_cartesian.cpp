@@ -320,7 +320,7 @@ bool ArmsCartesian::moveToPose(ArmsCartesian::WhichArm arm, geometry_msgs::Pose 
 
 	pubPtr->publish(cmd_stamped);
 
-	if(waitForMotion)
+	if(waitForMotion)	// FIXME: creates smart pointer error
 	{
 		ros::Time now = ros::Time::now();
 		ros::Time stop = ros::Time::now() + ros::Duration(timeOut);

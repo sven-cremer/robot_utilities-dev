@@ -35,12 +35,12 @@ void printTF(tf::StampedTransform t, WhichArm a)
 	std::string p;
 	if(a==RIGHT)
 	{
-		std::cout<< "#Right gripper:\n";
+		std::cout<< "## Right gripper:\n";
 		p="r";
 	}
 	else
 	{
-		std::cout<< "#Left gripper:\n";
+		std::cout<< "## Left gripper:\n";
 		p="l";
 	}
 
@@ -83,13 +83,13 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "print_state_node");
 	ros::NodeHandle n;
 
-	std::string robot_frame = "base_link";
+	std::string robot_frame = "torso_lift_link";
 	if (argc > 1)
 	{
 		robot_frame = argv[1];
 	}
 
-	ROS_INFO_STREAM("Frame id is: " << robot_frame );
+	std::cout<<"\n\tFrame id: " << robot_frame << "\n\n";
 
 	ros::ServiceClient srv_get_joints_ = n.serviceClient<apc_msgs::ReturnJointStates>("return_joint_states");
 
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 	while(ros::ok() && !done)
 	{
 
-		std::cout<<"Press [enter] to get joint state (q to quit):";
+		std::cout<<"Press [enter] to get joint state (q to quit):\n";
 		std::getline(std::cin, tmp);
 
 		if(tmp == "q")
@@ -184,7 +184,6 @@ int main(int argc, char **argv)
 			}
 		}
 		std::cout<<"\n###############################\n";
-		ROS_INFO("");
 	}
 
 	ROS_INFO("Shutting down ... ");

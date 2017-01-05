@@ -177,7 +177,6 @@ void RobotMoveit::printJointStatesSRDF()
 
 }
 
-
 bool RobotMoveit::getEndeffectorPose(RobotMoveit::WhichArm arm, geometry_msgs::Pose* current_pose)
 {
 
@@ -190,6 +189,20 @@ bool RobotMoveit::getEndeffectorPose(RobotMoveit::WhichArm arm, geometry_msgs::P
 
 	*current_pose = group->getCurrentPose().pose;
 
+	return true;
+}
+
+bool RobotMoveit::getEndeffectorPoseStamped(RobotMoveit::WhichArm arm, geometry_msgs::PoseStamped* current_pose)
+{
+
+	moveit::planning_interface::MoveGroup* group;
+
+	if(!selectArmGroup(arm,&group))
+	{
+		return false;
+	}
+
+	*current_pose = group->getCurrentPose();
 
 	return true;
 }
