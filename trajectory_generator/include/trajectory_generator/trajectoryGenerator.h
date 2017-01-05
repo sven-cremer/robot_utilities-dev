@@ -30,13 +30,19 @@ private:
 
 	std::map<char,geometry_msgs::Point> grid_;
 
+	int numPoints;
+
 public:
 
 	TrajectoryGenerator();
 	~TrajectoryGenerator();
 
 	void initGrid();
+	void str2Vec(std::string s);
 	void printGrid();
+
+
+
 
 };
 
