@@ -11,6 +11,15 @@
 TrajectoryGenerator::TrajectoryGenerator()
 {
 	numPoints = 0;
+
+	int Nx = 3;
+	int Ny = 3;
+	double dx = 0.07;
+	double dy = 0.10;
+	geometry_msgs::Point origin;
+	origin.z = 0.5;
+
+	initGrid(Nx, Ny, dx, dy, origin);
 }
 
 TrajectoryGenerator::~TrajectoryGenerator()
@@ -18,25 +27,13 @@ TrajectoryGenerator::~TrajectoryGenerator()
 
 }
 
-void TrajectoryGenerator::initGrid()
+void TrajectoryGenerator::initGrid( int Nx, int Ny,
+									double dx, double dy,
+                                    geometry_msgs::Point origin)
 {
-	numPoints = 0;
-
-	double x_origin = 0.0;
-	double y_origin = 0.0;
-
 	char alphabet = 'A';
-	geometry_msgs::Point p;
-
-	p.x = x_origin;
-	p.y = y_origin;
-	p.z = 0.5;
-
-	double dx = 0.07;
-	double dy = 0.10;
-
-	int Nx = 3;
-	int Ny = 3;
+	numPoints = 0;
+	geometry_msgs::Point p = origin;
 
 	for(int iy=0;iy<Ny;iy++)
 	{
@@ -50,31 +47,35 @@ void TrajectoryGenerator::initGrid()
 			alphabet++;
 			numPoints++;
 		}
-		p.x = x_origin;
+		p.x = origin.x;
 	}
-
 }
 
-void TrajectoryGenerator::str2Vec(std::string s)
+std::vector<geometry_msgs::Point> TrajectoryGenerator::str2Vec(std::string s)
 {
-
 	std::vector<geometry_msgs::Point> trajectory;
 
 	for ( int i = 0 ; i < s.length(); i++)
 	{
-		char key = s[i] ;
+		char key = s[i];
 
-		geometry_msgs::Point p = grid_[key];
-		trajectory.push_back(p);
+		std::map<char,geometry_msgs::Point>::iterator it = grid_.find(key);
 
-		std::cout<<key<<": [\t"<<p.x<<"\t"<<p.y<<"\t"<<p.z<<"\t]\n";
+		if(it != grid_.end())
+		{
+			geometry_msgs::Point p = it->second;
+			trajectory.push_back(p);
+		}
+		else
+		{
+			std::cout<<"Warning: Did not find entry for key "<<key<<"\n";
+		}
 	}
 
-	//return trajectory;
-
+	return trajectory;
 }
 
-void TrajectoryGenerator::printGrid()
+void TrajectoryGenerator::printGridMap()
 {
 	typedef std::map<char,geometry_msgs::Point>::iterator it_type;
 
@@ -89,4 +90,24 @@ void TrajectoryGenerator::printGrid()
 	std::cout<<"---\n";
 }
 
+void TrajectoryGenerator::printGridLayout()
+{
+	typedef std::map<char,geometry_msgs::Point>::iterator it_type;
+
+	double y = 0;	// Assume Nx * Ny grid
+
+	for(it_type iterator = grid_.begin(); iterator != grid_.end(); iterator++)
+	{
+	    char key = iterator->first;
+	    geometry_msgs::Point p = iterator->second;
+
+		if(p.y>y)
+		{
+			y=p.y;
+			std::cout<<"\n";
+		}
+		std::cout<<key<<" ";
+	}
+	std::cout<<"\n---\n";
+}
 

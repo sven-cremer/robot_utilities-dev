@@ -5,6 +5,8 @@
  *      Author: sven
  */
 
+// ROS
+#include <ros/ros.h>
 
 #include <trajectory_generator/trajectoryGenerator.h>
 /***********************************************************************************************************************
@@ -20,11 +22,10 @@ int main(int argc, char **argv)
 
 	TrajectoryGenerator tg;
 
-	tg.initGrid();
+	tg.printGridMap();
+	tg.printGridLayout();
 
-	tg.printGrid();
-
-	std::string s = "ABACH";
+	std::string s = "ABACHX";
 	tg.str2Vec(s);
 
 	ROS_INFO("Done!");
