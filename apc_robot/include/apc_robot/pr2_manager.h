@@ -62,6 +62,8 @@ public:
 	void on(		bool close_grippers=true);
 	void off(		bool open_grippers=true);
 
+	void setTorso(double height);
+
 	void openGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 	void closeGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 

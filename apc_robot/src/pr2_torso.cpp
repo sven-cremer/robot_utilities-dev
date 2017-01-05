@@ -98,15 +98,14 @@ Sends position goal to action client (non-blocking)
 ***********************************************************************************************************************/
 void Torso::sendGoal(double height)
 {
-
     goal.position = height;
     goal.min_duration = ros::Duration(2.0);
     goal.max_velocity = 1.0;
 			
     if (nh.ok())
     {
-      cancelMotion();
-      ROS_INFO("Sending torso goal ...");
+      //cancelMotion();
+      ROS_INFO("Sending torso goal (h=%.3fm)",height);
       torso_client->sendGoal(goal);
       motionInProgress = true;
     }
