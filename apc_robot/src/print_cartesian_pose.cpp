@@ -18,12 +18,12 @@ int main(int argc, char **argv)
 	ros::AsyncSpinner spinner(1);
 	spinner.start();
 
-	RobotMoveit baxter_moveit;
+	RobotMoveit robot_moveit;
 
 	std::string tmp;
 
-	geometry_msgs::Pose r_pose;
-	geometry_msgs::Pose l_pose;
+	geometry_msgs::PoseStamped r_pose;
+	geometry_msgs::PoseStamped l_pose;
 
 	while(ros::ok())
 	{
@@ -31,26 +31,28 @@ int main(int argc, char **argv)
 		ROS_INFO("Press [enter] to get joint state:");
 		std::getline(std::cin, tmp);
 
-		baxter_moveit.getEndeffectorPose(RobotMoveit::RIGHT,&r_pose);
-		baxter_moveit.getEndeffectorPose(RobotMoveit::LEFT,&l_pose);
+		robot_moveit.getEndeffectorPoseStamped(RobotMoveit::RIGHT,&r_pose);
+		robot_moveit.getEndeffectorPoseStamped(RobotMoveit::LEFT,&l_pose);
 
-		std::cout<< "Right gripper:\n"
-				 << "r_pose.position.x     = " << r_pose.position.x     << ";\n"
-				 << "r_pose.position.y     = " << r_pose.position.y     << ";\n"
-				 << "r_pose.position.z     = " << r_pose.position.z     << ";\n"
-				 << "r_pose.orientation.x  = " << r_pose.orientation.x  << ";\n"
-				 << "r_pose.orientation.y  = " << r_pose.orientation.y  << ";\n"
-				 << "r_pose.orientation.z  = " << r_pose.orientation.z  << ";\n"
-				 << "r_pose.orientation.w  = " << r_pose.orientation.w  << ";\n\n";
+		std::cout<< "Right gripper"<<":\n"
+				 << "frame_id: " << r_pose.header.frame_id     << "\n"
+				 << "r_pose.position.x     = " << r_pose.pose.position.x     << ";\n"
+				 << "r_pose.position.y     = " << r_pose.pose.position.y     << ";\n"
+				 << "r_pose.position.z     = " << r_pose.pose.position.z     << ";\n"
+				 << "r_pose.orientation.x  = " << r_pose.pose.orientation.x  << ";\n"
+				 << "r_pose.orientation.y  = " << r_pose.pose.orientation.y  << ";\n"
+				 << "r_pose.orientation.z  = " << r_pose.pose.orientation.z  << ";\n"
+				 << "r_pose.orientation.w  = " << r_pose.pose.orientation.w  << ";\n\n";
 
 		std::cout<< "Left gripper:\n"
-				 << "l_pose.position.x     = " << l_pose.position.x     << ";\n"
-				 << "l_pose.position.y     = " << l_pose.position.y     << ";\n"
-				 << "l_pose.position.z     = " << l_pose.position.z     << ";\n"
-				 << "l_pose.orientation.x  = " << l_pose.orientation.x  << ";\n"
-				 << "l_pose.orientation.y  = " << l_pose.orientation.y  << ";\n"
-				 << "l_pose.orientation.z  = " << l_pose.orientation.z  << ";\n"
-				 << "l_pose.orientation.w  = " << l_pose.orientation.w  << ";\n\n";
+				 << "frame_id: " << l_pose.header.frame_id     << "\n"
+				 << "l_pose.position.x     = " << l_pose.pose.position.x     << ";\n"
+				 << "l_pose.position.y     = " << l_pose.pose.position.y     << ";\n"
+				 << "l_pose.position.z     = " << l_pose.pose.position.z     << ";\n"
+				 << "l_pose.orientation.x  = " << l_pose.pose.orientation.x  << ";\n"
+				 << "l_pose.orientation.y  = " << l_pose.pose.orientation.y  << ";\n"
+				 << "l_pose.orientation.z  = " << l_pose.pose.orientation.z  << ";\n"
+				 << "l_pose.orientation.w  = " << l_pose.pose.orientation.w  << ";\n\n";
 
 	}
 

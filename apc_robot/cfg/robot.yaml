@@ -1,7 +1,7 @@
 apc_robot:
   robot:
-   'baxter'
-#   'pr2'
+#   'baxter'
+   'pr2'
   baxter:
     joint_states: '/robot/joint_states'
     move_group_left: 'left_arm'

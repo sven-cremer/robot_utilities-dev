@@ -40,6 +40,8 @@ add_service_files(DIRECTORY srv FILES
   ReturnJointStates.srv
   GetItemFromWorkOrder.srv
   TrajectoryGenerate.srv
+  GetRequestedItem.srv
+  GetQRCodeForRequestedItem.srv
 )
 
 generate_messages(

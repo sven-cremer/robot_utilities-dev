@@ -33,11 +33,9 @@ initializes services and clients
 PR2Manager::PR2Manager(std::string arm_ctrl_new)
 {
 	// Set controller names
-	arm_ctrl_new_     = arm_ctrl_new;
-
-//	arm_controllers_default.push_back("r_arm_controller");
+	arm_controllers_default.push_back("r_arm_controller");
 	arm_controllers_default.push_back("l_arm_controller");
-	arm_controllers_cart.push_back(arm_ctrl_new_);
+	arm_controllers_new.push_back(arm_ctrl_new);
 
 	// ROS service clients
 	list_srv_ = nh.serviceClient<pr2_mechanism_msgs::ListControllers>("pr2_controller_manager/list_controllers");
@@ -56,25 +54,25 @@ PR2Manager::PR2Manager(std::string arm_ctrl_new)
 		else if(state == STOPPED)
 		{
 			ROS_WARN("Turning on %s ...",arm_ctrl.c_str());
-			switchControllers(arm_controllers_default,arm_controllers_cart);
+			switchControllers(arm_controllers_default,arm_controllers_new);
 		}
 		else
 		{
-			ROS_ERROR("No left arm controller running!");
+			ROS_ERROR("The default arm controllers are not running!");
 			exit(-1);
 		}
 	}
 
 	// Stop new arm controller
-	for(int i=0;i<arm_controllers_cart.size();i++)
+	for(int i=0;i<arm_controllers_new.size();i++)
 	{
-		std::string arm_ctrl = arm_controllers_cart[i];
+		std::string arm_ctrl = arm_controllers_new[i];
 		PR2Manager::ControlState state = controllerState(arm_ctrl);
 
 		if(state == RUNNING)
 		{
 			ROS_WARN("Turning off %s ...",arm_ctrl.c_str());
-			switchControllers(arm_controllers_default,arm_controllers_cart);
+			switchControllers(arm_controllers_default,arm_controllers_new);
 		}
 		else if(state == STOPPED)
 		{
@@ -82,14 +80,12 @@ PR2Manager::PR2Manager(std::string arm_ctrl_new)
 		}
 		else
 		{
-			ROS_ERROR("No new arm controller running!");
-			exit(-1);
+			ROS_WARN("The new arm controllers are not running!");
 		}
 	}
 
 	// Wait for services
-	ROS_INFO("Waiting for services...");
-
+	//ROS_INFO("Waiting for services...");
 	//ros::service::waitForService("/pr2_cart/getState",-1);
 	//srv_get_State = nh.serviceClient<ice_msgs::getState>("/pr2_cart/getState");
 
@@ -159,8 +155,8 @@ void PR2Manager::robotInit(bool open_grippers)
 	r_joints.push_back(-3.15487);
 
 
-	arms.sendGoal(l_joints, ArmsJoint::LEFT);
-	arms.sendGoal(r_joints, ArmsJoint::RIGHT);
+	arms_joint.sendGoal(l_joints, ArmsJoint::LEFT);
+	arms_joint.sendGoal(r_joints, ArmsJoint::RIGHT);
 
 	ROS_INFO("PR2 in position!");
 
@@ -175,14 +171,14 @@ void PR2Manager::on(bool close_grippers)
 {
 //	if(close_grippers)
 //		closeGrippers();
-	switchControllers(arm_controllers_cart, arm_controllers_default);
+	switchControllers(arm_controllers_new, arm_controllers_default);
 }
 /***********************************************************************************************************************
 Turn off
 ***********************************************************************************************************************/
 void PR2Manager::off(bool open_grippers)
 {
-	switchControllers(arm_controllers_default, arm_controllers_cart);
+	switchControllers(arm_controllers_default, arm_controllers_new);
 //	if(open_grippers)
 //		openGrippers();
 }
@@ -228,6 +224,13 @@ void PR2Manager::closeGrippers(PR2Manager::WhichArm a)
 		ROS_INFO("Waiting for gripper motions to complete ...");
 		sleep(2);
 	}
+}
+/***********************************************************************************************************************
+SetTorso
+***********************************************************************************************************************/
+void PR2Manager::setTorso(double height)
+{
+	torso.sendGoal(height);	// Blocking function
 }
 /***********************************************************************************************************************
 State
@@ -373,6 +376,16 @@ void PR2Manager::switchControllers(const std::vector<std::string>& start_control
 	}
 }
 
+bool PR2Manager::setControllers(const std::vector<std::string> default_controllers, const std::vector<std::string> new_controllers)
+{
+	arm_controllers_default.clear();
+	arm_controllers_new.clear();
+
+	arm_controllers_default = default_controllers;
+	arm_controllers_new = new_controllers;
+
+	return true;
+}
 
 /***********************************************************************************************************************
 Main loop for testing
