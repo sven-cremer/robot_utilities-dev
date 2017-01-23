@@ -13,6 +13,7 @@
 
 // Messages
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/Pose.h>
 
 /*! \class TrajectoryGenerator trajectoryGenerator.h "include/trajectoryGenerator.h"
  *  \brief For generating Cartesian motion trajectories
@@ -37,7 +38,7 @@ public:
                    double dx, double dy,
                    geometry_msgs::Point origin);
 
-	std::vector<geometry_msgs::Point> str2Vec(std::string s);
+	std::vector<geometry_msgs::Pose> str2Vec(std::string s);
 	void printGridMap();
 	void printGridLayout();
 

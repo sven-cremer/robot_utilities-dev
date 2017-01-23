@@ -53,9 +53,9 @@ void TrajectoryGenerator::initGrid( int Nx, int Ny,
 	}
 }
 
-std::vector<geometry_msgs::Point> TrajectoryGenerator::str2Vec(std::string s)
+std::vector<geometry_msgs::Pose> TrajectoryGenerator::str2Vec(std::string s)
 {
-	std::vector<geometry_msgs::Point> trajectory;
+	std::vector<geometry_msgs::Pose> trajectory;
 
 	for ( int i = 0 ; i < s.length(); i++)
 	{
@@ -65,7 +65,9 @@ std::vector<geometry_msgs::Point> TrajectoryGenerator::str2Vec(std::string s)
 
 		if(it != grid_.end())
 		{
-			geometry_msgs::Point p = it->second;
+			geometry_msgs::Pose p;
+			p.position = it->second;	// Set position (geometry_msgs::Point)
+			p.orientation.w = 1;		// Set orientation (geometry_msgs::Quaternion)
 			trajectory.push_back(p);
 		}
 		else
