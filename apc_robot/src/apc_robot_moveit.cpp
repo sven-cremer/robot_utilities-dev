@@ -16,6 +16,12 @@ RobotMoveit::RobotMoveit()
 {
 	ROS_INFO("RobotMoveit::RobotMoveit - Initializing");
 
+	// Planning scene interface
+	planning_scene_diff_pub = nh.advertise<moveit_msgs::PlanningScene>("/move_group/monitored_planning_scene", 10);
+	pub_co = nh.advertise<moveit_msgs::CollisionObject>("collision_object", 10);
+	pub_aco = nh.advertise<moveit_msgs::AttachedCollisionObject>("attached_collision_object", 10);
+	pub_pick = nh.advertise<moveit_msgs::PickupActionGoal>("/pickup/goal", 10);
+
 	// Load robot name from parameter server
 	std::string robot = "pr2";
 	if(!(nh.getParam("/apc_robot/robot", robot)))
@@ -367,8 +373,9 @@ bool RobotMoveit::executeCarteGoal(RobotMoveit::WhichArm arm, geometry_msgs::Pos
 	}
 
 	group->setPoseTarget(target);
+	group->setStartStateToCurrentState();
 
-	bool success = true;//group->plan(my_plan);		// FIXME gets stuck here, missing a launch file?
+	bool success = group->plan(my_plan);		// Note: this gets stuck if the ros::AsyncSpinner has too few threads
 
 	ROS_INFO("Planning Cartesian goal %s",success?"SUCCEEDED":"FAILED");
 
