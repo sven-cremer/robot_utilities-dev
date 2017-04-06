@@ -167,6 +167,9 @@ private:
 	 */
 	bool rightMotionInProgress;
 
+	void openGripper(trajectory_msgs::JointTrajectory& posture);
+	void closedGripper(trajectory_msgs::JointTrajectory& posture);
+
 public:
 	//! An enumerated type
 	/*! Allows for easy description of arm selection throughout the class. */
@@ -332,6 +335,9 @@ public:
 	 \sa motionComplete()
 	 */
 	bool cancelMotion();
+
+	// Work in progress:
+	bool pickObject(std::string name, geometry_msgs::PoseStamped p);
 };
 
 
