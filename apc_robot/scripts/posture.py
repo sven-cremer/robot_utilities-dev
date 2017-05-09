@@ -39,7 +39,7 @@ controller = rospy.myargv()[1]
 posture = rospy.myargv()[2]
 
 
-pub_posture = rospy.Publisher("/%s/command_posture" % controller, Float64MultiArray)
+pub_posture = rospy.Publisher("/%s/command_posture" % controller, Float64MultiArray, queue_size=1)
 postures = {
     'off': [],
     'mantis': [0, 1, 0,  -1, 3.14, -1, 3.14],
