@@ -84,11 +84,11 @@
         args="l_cart r_cart" /-->
 
   <!--node name="r_posture"
-        pkg="robot_mechanism_controllers" type="posture.py"
-        args="r_cart elbowupr" />
+        pkg="apc_robot" type="posture.py"
+        args="r_cart elbowupr" /-->
         
-  <node name="l_posture"
-        pkg="robot_mechanism_controllers" type="posture.py"
+  <!-- node name="l_posture"
+        pkg="apc_robot" type="posture.py"
         args="l_cart elbowupl" /-->
 
 </launch>
