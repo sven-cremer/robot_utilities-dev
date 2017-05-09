@@ -46,14 +46,28 @@
 #ifndef APC_ROBOT_MOVEIT_H_
 #define APC_ROBOT_MOVEIT_H_
 
+#include <fstream>
+
 // ROS
 #include <ros/ros.h>
 
 // Messages
 #include <geometry_msgs/Pose.h>
 #include <sensor_msgs/JointState.h>
+#include <geometric_shapes/shape_messages.h>
+
+#include "geometric_shapes/shapes.h"
+#include "geometric_shapes/mesh_operations.h"
+#include "geometric_shapes/shape_operations.h"
+#include <geometric_shapes/solid_primitive_dims.h>
 
 // MoveIt!
+#include <moveit_msgs/PlanningScene.h>
+#include <moveit_msgs/CollisionObject.h>
+#include <moveit_msgs/AttachedCollisionObject.h>
+#include <moveit_msgs/Grasp.h>
+#include <moveit_msgs/PickupActionGoal.h>
+
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/robot_model/robot_model.h>
@@ -133,6 +147,11 @@ private:
 
 	// Planning
 	//moveit::planning_interface::PlanningSceneInterface* planning_scene_interface;
+	ros::Publisher planning_scene_diff_pub;
+	ros::Publisher pub_co ;
+	ros::Publisher pub_aco;
+	ros::Publisher pub_pick;
+
 	// Rviz
 	//moveit_msgs::DisplayTrajectory* display_trajectory;
 	/*!
@@ -147,6 +166,9 @@ private:
       false: arm is not in motion
 	 */
 	bool rightMotionInProgress;
+
+	void openGripper(trajectory_msgs::JointTrajectory& posture);
+	void closedGripper(trajectory_msgs::JointTrajectory& posture);
 
 public:
 	//! An enumerated type
@@ -313,6 +335,9 @@ public:
 	 \sa motionComplete()
 	 */
 	bool cancelMotion();
+
+	// Work in progress:
+	bool pickObject(std::string name, geometry_msgs::PoseStamped p);
 };
 
 
