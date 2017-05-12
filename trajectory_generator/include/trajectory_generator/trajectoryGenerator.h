@@ -10,6 +10,7 @@
 
 // ROS
 //#include <ros/ros.h>
+#include <tf/tf.h>
 
 // Math
 #include <Eigen/Core>
@@ -46,6 +47,9 @@ public:
 	void printGridMap();
 	void printGridLayout();
 
+	// Interpolator with constant linear and angular velocity
+	void interpolator(const Eigen::Affine3d &x0, const Eigen::Affine3d &x1, int N, std::vector<Eigen::Affine3d> &result);
+	void interpolator(const geometry_msgs::Pose &ps, const geometry_msgs::Pose &pf, int N, std::vector<geometry_msgs::Pose> &result);
 
 };
 

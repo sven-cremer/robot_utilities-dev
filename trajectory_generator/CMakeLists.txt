@@ -5,6 +5,7 @@ project(trajectory_generator)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
+  tf
   cmake_modules
 )
 
@@ -18,7 +19,7 @@ find_package(Eigen REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES trajectory_generator
-  CATKIN_DEPENDS geometry_msgs cmake_modules roscpp
+  CATKIN_DEPENDS geometry_msgs cmake_modules roscpp tf
   DEPENDS Eigen
 )
 
