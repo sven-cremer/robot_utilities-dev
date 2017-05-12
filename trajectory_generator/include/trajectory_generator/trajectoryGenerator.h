@@ -11,6 +11,10 @@
 // ROS
 //#include <ros/ros.h>
 
+// Math
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 // Messages
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Pose.h>
