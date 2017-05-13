@@ -71,10 +71,17 @@ target_link_libraries(  print_state       	${catkin_LIBRARIES} )
 add_executable(         apc_arms_joint_node      src/apc_arms_joint.cpp)
 target_link_libraries(  apc_arms_joint_node      ${catkin_LIBRARIES})
 
+add_executable(         pr2_head_node           src/pr2_head.cpp)
+target_link_libraries(  pr2_head_node           ${catkin_LIBRARIES})
+
+add_executable(         pr2_torso_node          src/pr2_torso.cpp)
+target_link_libraries(  pr2_torso_node          ${catkin_LIBRARIES})
+
+
 ## Libraries
-add_library(            apc_arms_cartesian        src/apc_arms_cartesian.cpp)
-add_dependencies(       apc_arms_cartesian   	  apc_msgs_generate_messages_cpp)
-target_link_libraries(  apc_arms_cartesian        ${catkin_LIBRARIES})
+add_library(            apc_arms_cartesian      src/apc_arms_cartesian.cpp)
+add_dependencies(       apc_arms_cartesian      apc_msgs_generate_messages_cpp)
+target_link_libraries(  apc_arms_cartesian      ${catkin_LIBRARIES})
 
 add_library(            apc_arms_joint          src/apc_arms_joint.cpp)
 target_link_libraries(  apc_arms_joint          ${catkin_LIBRARIES})
@@ -83,17 +90,15 @@ add_library(            apc_robot_moveit        src/apc_robot_moveit.cpp)
 target_link_libraries(  apc_robot_moveit        ${catkin_LIBRARIES})
 
 add_library(            apc_robot_grippers      src/apc_robot_grippers.cpp)
-add_dependencies(       apc_robot_grippers   	apc_msgs_generate_messages_cpp)
+add_dependencies(       apc_robot_grippers      apc_msgs_generate_messages_cpp)
 target_link_libraries(  apc_robot_grippers      ${catkin_LIBRARIES})
 
-add_library(            pr2_torso        		src/pr2_torso.cpp)
-add_dependencies(       pr2_torso     	                apc_msgs_generate_messages_cpp)
-#add_executable(        pr2_torso        		src/pr2_torso.cpp)
-target_link_libraries(  pr2_torso        		${catkin_LIBRARIES})
+add_library(            pr2_torso               src/pr2_torso.cpp)
+add_dependencies(       pr2_torso               apc_msgs_generate_messages_cpp)
+target_link_libraries(  pr2_torso               ${catkin_LIBRARIES})
 
-add_library(            pr2_head       			src/pr2_head.cpp)
-#add_executable(        pr2_head       			src/pr2_head.cpp)
-target_link_libraries(  pr2_head        		${catkin_LIBRARIES})
+add_library(            pr2_head                src/pr2_head.cpp)
+target_link_libraries(  pr2_head                ${catkin_LIBRARIES})
 
 add_library(            pr2_base                src/base.cpp)
 target_link_libraries(  pr2_base                ${catkin_LIBRARIES})
@@ -102,15 +107,16 @@ add_dependencies(       pr2_base                move_base_msgs_generate_messages
 add_library(            pr2_manager             src/pr2_manager.cpp)
 target_link_libraries(  pr2_manager             pr2_head pr2_torso apc_arms_joint apc_robot_grippers apc_arms_cartesian ${catkin_LIBRARIES})
 
+
 ## Old versions and Tesing
 
-add_executable(         joint     src/apc_arms_joint.cpp)
-add_dependencies(       joint   	apc_msgs_generate_messages_cpp)
-target_link_libraries(  joint     ${catkin_LIBRARIES})
+add_executable(         joint                  src/apc_arms_joint.cpp)
+add_dependencies(       joint                  apc_msgs_generate_messages_cpp)
+target_link_libraries(  joint                  ${catkin_LIBRARIES})
 
-add_executable(         grippers     src/apc_robot_grippers.cpp)
-add_dependencies(       grippers   	apc_msgs_generate_messages_cpp)
-target_link_libraries(  grippers     ${catkin_LIBRARIES})
+add_executable(         grippers               src/apc_robot_grippers.cpp)
+add_dependencies(       grippers               apc_msgs_generate_messages_cpp)
+target_link_libraries(  grippers               ${catkin_LIBRARIES})
 
 add_executable(         testing_node           src/testing/testing_node.cpp)
 target_link_libraries(  testing_node           apc_robot_moveit ${catkin_LIBRARIES}) # ${Boost_LIBRARIES})
