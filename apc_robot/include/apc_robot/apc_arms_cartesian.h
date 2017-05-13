@@ -263,6 +263,14 @@ public:
 	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), moveInDirection()
 	 */
 	bool getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::PoseStamped& result);
+	//! Gets the current position of the specified arm
+	/*!
+	\param arm an enumerated type
+	\param result is a geometry_msgs::Pose
+	\return True upon successful retrieval of arm position
+	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), moveInDirection()
+	 */
+	bool getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pose& result);
 	//! Moves both arms into specified joint positions
 	/*!
 	\param posture_position a std::vector of doubles

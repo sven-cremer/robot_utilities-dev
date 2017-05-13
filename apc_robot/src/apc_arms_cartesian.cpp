@@ -89,6 +89,14 @@ bool ArmsCartesian::getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pos
 	return true;
 }
 
+bool ArmsCartesian::getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pose& result)
+{
+	geometry_msgs::PoseStamped p;
+	bool success = getCurrentPose(a, p);
+	result = p.pose;
+	return success;
+}
+
 bool ArmsCartesian::waitForMotion(double max_duration)
 {
 
