@@ -74,6 +74,9 @@ public:
 
 	bool setControllers(const std::vector<std::string> default_controllers, const std::vector<std::string> new_controllers);
 
+	void setDefaultTorso(double height);
+	void setDefaultArmJoints(PR2Manager::WhichArm a, std::vector<double> joint_values);
+
 private:
 
 	ros::NodeHandle nh;
@@ -87,6 +90,10 @@ private:
 	Gripper grippers;
 	ArmsJoint arms_joint;
 	//ArmsCartesian arms_cart;
+
+	double defaultTorso;
+	std::vector<double> defaultArmJointsL;
+	std::vector<double> defaultArmJointsR;
 
 	pr2_controllers_msgs::JointTrajectoryGoal leftArmStartPosition();
 	pr2_controllers_msgs::JointTrajectoryGoal rightArmStartPosition();
