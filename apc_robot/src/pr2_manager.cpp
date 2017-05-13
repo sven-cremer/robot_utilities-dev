@@ -145,7 +145,7 @@ void PR2Manager::robotInit(bool open_grippers)
 	arms_joint.sendGoal(defaultArmJointsR, ArmsJoint::RIGHT);
 
 	//head.sendGoalCart("torso_frame", 0.48,0.08,-0.05, 3.0);
-	head.sendGoal(0.1, 0.6, 0.0, 0.0);
+	head.sendGoal(0.1, 0.5, 0.0, 0.0);
 
 	ROS_INFO("PR2 in position!");
 
@@ -236,6 +236,13 @@ PR2Manager::~PR2Manager()
 {
 	//off;
 
+}
+/***********************************************************************************************************************
+Look at Pose
+***********************************************************************************************************************/
+void PR2Manager::lookAtPoint(geometry_msgs::Point p, double duration)
+{
+	head.sendGoalCart("torso_lift_link", p, duration);
 }
 /***********************************************************************************************************************
 Goal objects for starting positions
@@ -375,7 +382,6 @@ bool PR2Manager::setControllers(const std::vector<std::string> default_controlle
 
 	return true;
 }
-
 /***********************************************************************************************************************
 set functions
 ***********************************************************************************************************************/

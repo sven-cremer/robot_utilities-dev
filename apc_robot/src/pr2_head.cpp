@@ -79,7 +79,7 @@ void Head::sendGoalCart(std::string frame_id, double x, double y, double z, doub
 	if (nh.ok())
 	{
 		//cancelMotion();														// Todo: make a sendNewGoalCart
-		ROS_INFO("Sending Point Head goal ...");
+		ROS_DEBUG("Sending Point Head goal ...");
 		point_client->sendGoal(goal);                                       // TODO: ADD TO motionComplte/ cancel Goals
 		point_motionInProgress = true;
 	}

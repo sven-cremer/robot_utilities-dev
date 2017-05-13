@@ -64,6 +64,7 @@ public:
 	void off(		bool open_grippers=true);
 
 	void setTorso(double height);
+	void lookAtPoint(geometry_msgs::Point p, double duration);
 
 	void openGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 	void closeGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
