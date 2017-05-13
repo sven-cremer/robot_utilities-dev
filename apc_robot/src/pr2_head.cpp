@@ -50,6 +50,11 @@ Head::~Head()
 /***********************************************************************************************************************
 Points the high-def camera frame at a point in a given frame
 ***********************************************************************************************************************/
+void Head::sendGoalCart(std::string frame_id, geometry_msgs::Point p, double duration)
+{
+	sendGoalCart(frame_id, p.x, p.y, p.z, duration);
+}
+
 void Head::sendGoalCart(std::string frame_id, double x, double y, double z, double duration)
 {
 

@@ -100,7 +100,7 @@ target_link_libraries(  pr2_base                ${catkin_LIBRARIES})
 add_dependencies(       pr2_base                move_base_msgs_generate_messages_cpp)
 
 add_library(            pr2_manager             src/pr2_manager.cpp)
-target_link_libraries(  pr2_manager             pr2_torso apc_arms_joint apc_robot_grippers apc_arms_cartesian ${catkin_LIBRARIES})
+target_link_libraries(  pr2_manager             pr2_head pr2_torso apc_arms_joint apc_robot_grippers apc_arms_cartesian ${catkin_LIBRARIES})
 
 ## Old versions and Tesing
 

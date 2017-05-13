@@ -144,6 +144,9 @@ void PR2Manager::robotInit(bool open_grippers)
 	arms_joint.sendGoal(defaultArmJointsL, ArmsJoint::LEFT);
 	arms_joint.sendGoal(defaultArmJointsR, ArmsJoint::RIGHT);
 
+	//head.sendGoalCart("torso_frame", 0.48,0.08,-0.05, 3.0);
+	head.sendGoal(0.1, 0.6, 0.0, 0.0);
+
 	ROS_INFO("PR2 in position!");
 
 	//Re-initialize controller

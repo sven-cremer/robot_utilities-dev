@@ -65,6 +65,8 @@ REVISION HISTORY:
 #include <actionlib/client/simple_action_client.h>
 #include <control_msgs/PointHeadAction.h>
 #include <control_msgs/JointTrajectoryAction.h>
+#include <geometry_msgs/Point.h>
+
 typedef actionlib::SimpleActionClient<control_msgs::JointTrajectoryAction> TrajClient;
 typedef actionlib::SimpleActionClient<control_msgs::PointHeadAction> HeadClient;
 
@@ -129,6 +131,14 @@ class Head
 	      \sa sendGoal(), shakeHead()
     	 */
         void sendGoalCart(std::string frame_id, double x, double y, double z, double duration);
+        //! Points the high-def camera frame at a point in a given frame
+    	/*!
+    	  \param frame_id a std::string
+	      \param p a geometry_msgs::Point
+	      \param duration a double
+	      \sa sendGoal(), shakeHead()
+    	 */
+        void sendGoalCart(std::string frame_id, geometry_msgs::Point p, double duration);
     	//! Sends position goal to action client (non-blocking)
         /*!
     	 \param pan a double

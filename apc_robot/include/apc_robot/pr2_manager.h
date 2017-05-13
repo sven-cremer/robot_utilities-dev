@@ -31,6 +31,7 @@ REVISION HISTORY:
 #include <apc_robot/apc_arms_cartesian.h>
 #include <apc_robot/pr2_torso.h>
 #include <apc_robot/apc_robot_grippers.h>
+#include <apc_robot/pr2_head.h>
 
 // Service messages
 #include <pr2_controllers_msgs/JointTrajectoryAction.h>
@@ -90,6 +91,7 @@ private:
 	Gripper grippers;
 	ArmsJoint arms_joint;
 	//ArmsCartesian arms_cart;
+	Head head;
 
 	double defaultTorso;
 	std::vector<double> defaultArmJointsL;
