@@ -10,16 +10,16 @@
 
 TrajectoryGenerator::TrajectoryGenerator()
 {
-	numPoints = 0;
+	// Set default values
+	layout.Nx = 3;
+	layout.Ny = 3;
+	layout.dx = 0.07;
+	layout.dy = 0.10;
+	layout.origin.z = 0.5;
 
-	int Nx = 3;
-	int Ny = 3;
-	double dx = 0.07;
-	double dy = 0.10;
-	geometry_msgs::Point origin;
-	origin.z = 0.5;
+	numPoints = layout.Nx * layout.Ny;
 
-	initGrid(Nx, Ny, dx, dy, origin);
+	initGrid();
 }
 
 TrajectoryGenerator::~TrajectoryGenerator()
@@ -31,25 +31,37 @@ void TrajectoryGenerator::initGrid( int Nx, int Ny,
 									double dx, double dy,
                                     geometry_msgs::Point origin)
 {
+	layout.Nx = Nx;
+	layout.Ny = Ny;
+	layout.dx = dx;
+	layout.dy = dy;
+	layout.origin = origin;
+
+	numPoints = layout.Nx * layout.Ny;
+
+	initGrid();
+}
+void TrajectoryGenerator::initGrid()
+{
 	grid_.clear();
 
 	char alphabet = 'A';
 	numPoints = 0;
-	geometry_msgs::Point p = origin;
+	geometry_msgs::Point p = layout.origin;
 
-	for(int iy=0;iy<Ny;iy++)
+	for(int iy=0;iy<layout.Ny;iy++)
 	{
-		p.y += iy*dy;
-		for(int ix=0;ix<Nx;ix++)
+		p.y += iy*layout.dy;
+		for(int ix=0;ix<layout.Nx;ix++)
 		{
-			p.x += ix*dx;
+			p.x += ix*layout.dx;
 
 			grid_[alphabet] = p;
 
 			alphabet++;
 			numPoints++;
 		}
-		p.x = origin.x;
+		p.x = layout.origin.x;
 	}
 }
 
@@ -68,6 +80,8 @@ std::vector<geometry_msgs::Pose> TrajectoryGenerator::str2Vec(std::string s)
 			geometry_msgs::Pose p;
 			p.position = it->second;	// Set position (geometry_msgs::Point)
 			p.orientation.w = 1;		// Set orientation (geometry_msgs::Quaternion)
+			//p.orientation.w = 0.707;
+			//p.orientation.x = 0.707;
 			trajectory.push_back(p);
 		}
 		else
@@ -91,28 +105,26 @@ void TrajectoryGenerator::printGridMap()
 
 		std::cout<<key<<": [\t"<<p.x<<"\t"<<p.y<<"\t"<<p.z<<"\t]\n";
 	}
-	std::cout<<"---\n";
+	std::cout<<"\n";
 }
 
 void TrajectoryGenerator::printGridLayout()
 {
-	typedef std::map<char,geometry_msgs::Point>::iterator it_type;
+	std::cout<<"  PR2 —> y \n";
+	std::cout<<"   |       \n";
+	std::cout<<"   V x     \n";
 
-	double y = 0;	// Assume Nx * Ny grid
-
-	for(it_type iterator = grid_.begin(); iterator != grid_.end(); iterator++)
+	for(int ix=0;ix<layout.Nx;ix++)
 	{
-	    char key = iterator->first;
-	    geometry_msgs::Point p = iterator->second;
-
-		if(p.y>y)
+		std::cout<<"\n   ";
+		for(int iy=0;iy<layout.Ny;iy++)
 		{
-			y=p.y;
-			std::cout<<"\n";
+			char key = 'A';
+			key += iy*layout.Nx + ix;
+			std::cout<<key<<" ";
 		}
-		std::cout<<key<<" ";
 	}
-	std::cout<<"\n---\n";
+	std::cout<<"\n\n";
 }
 
 void TrajectoryGenerator::interpolator(const Eigen::Affine3d &x0, const Eigen::Affine3d &x1, int N, std::vector<Eigen::Affine3d> &result)

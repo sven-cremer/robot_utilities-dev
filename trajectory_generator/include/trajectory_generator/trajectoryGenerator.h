@@ -27,6 +27,14 @@ class TrajectoryGenerator
 {
 private:
 
+	struct Grid2d{
+		geometry_msgs::Point origin;
+		int Nx, Ny;
+		double dx, dy;
+	};
+
+	Grid2d layout;
+
 	//ros::NodeHandle nh;
 	//ros::ServiceServer srv_srv_;
 
@@ -34,11 +42,14 @@ private:
 
 	int numPoints;
 
+
 public:
 
 	TrajectoryGenerator();
 	~TrajectoryGenerator();
 
+	// Initialize grid
+	void initGrid();
 	void initGrid( int Nx, int Ny,
                    double dx, double dy,
                    geometry_msgs::Point origin);
