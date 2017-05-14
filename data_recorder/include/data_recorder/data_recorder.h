@@ -21,6 +21,8 @@ class DataRecorder
 {
 public:
 
+	enum DataType{ CSV, ROSBAG };
+
 	DataRecorder(std::vector<std::string> param_topics,
                  std::vector<std::string> param_fnames,
 				 std::string param_dataDir,
@@ -41,7 +43,7 @@ private:
 	std::string path;
 
 	void start(std::string pathDataDir);
-	void systemStart(std::string topic, std::string fname, std::string pathDataDir);
+	void systemStart(std::string topic, std::string fname, std::string pathDataDir, DataRecorder::DataType type = DataRecorder::CSV);
 	void systemStop (std::string topic);
 
 	void createDataFolder(std::string pathDataDir);

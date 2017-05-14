@@ -65,11 +65,17 @@ void DataRecorder::stop()
 	}
 }
 
-void DataRecorder::systemStart(std::string topic, std::string fileName, std::string pathDataDir)
+void DataRecorder::systemStart(std::string topic, std::string fileName, std::string pathDataDir, DataRecorder::DataType type)
 {
-	  std::string cmd = "rostopic echo -p " + topic  + " > " + pathDataDir + "/" + fileName + ".csv &";
-	  std::cout<<"$ "<<cmd.c_str()<<"\n";
-	  system( cmd.c_str() );
+	std::string cmd;
+
+	if(type == DataRecorder::ROSBAG)
+		cmd = "rosbag record " + topic  + " -O " + pathDataDir + "/" + fileName + ".bag &";		// Note: only works if recording entire topic, i.e this doesn't work: topic/subtopic
+	else
+		cmd = "rostopic echo -p " + topic  + " > " + pathDataDir + "/" + fileName + ".csv &";
+
+	std::cout<<"$ "<<cmd.c_str()<<"\n";
+	system( cmd.c_str() );
 }
 
 void DataRecorder::systemStop(std::string topic)
