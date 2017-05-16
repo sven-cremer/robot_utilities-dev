@@ -51,17 +51,16 @@ void TrajectoryGenerator::initGrid()
 
 	for(int iy=0;iy<layout.Ny;iy++)
 	{
-		p.y += iy*layout.dy;
+		p.y = layout.origin.y + iy*layout.dy;
 		for(int ix=0;ix<layout.Nx;ix++)
 		{
-			p.x += ix*layout.dx;
+			p.x = layout.origin.x + ix*layout.dx;
 
 			grid_[alphabet] = p;
 
 			alphabet++;
 			numPoints++;
 		}
-		p.x = layout.origin.x;
 	}
 }
 
