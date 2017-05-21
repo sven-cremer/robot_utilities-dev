@@ -33,6 +33,8 @@ public:
 	void start();
 	void stop();
 
+	std::string getPathDataDir();
+
 private:
 
 	//rosbag::Bag bag;
@@ -41,12 +43,12 @@ private:
 	std::vector<std::string> fnames;
 	std::string dataDir;
 	std::string path;
+	std::string pathDataDir;
 
-	void start(std::string pathDataDir);
-	void systemStart(std::string topic, std::string fname, std::string pathDataDir, DataRecorder::DataType type = DataRecorder::CSV);
+	void systemStart(std::string topic, std::string fname, DataRecorder::DataType type = DataRecorder::CSV);
 	void systemStop (std::string topic);
 
-	void createDataFolder(std::string pathDataDir);
+	void createDataFolder();
 };
 
 
