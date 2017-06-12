@@ -33,7 +33,7 @@ initializes services and clients
 PR2Manager::PR2Manager(std::string arm_ctrl_new)
 {
 	// Set controller names
-	arm_controllers_default.push_back("r_arm_controller");
+	//arm_controllers_default.push_back("r_arm_controller");
 	arm_controllers_default.push_back("l_arm_controller");
 	arm_controllers_new.push_back(arm_ctrl_new);
 
@@ -142,7 +142,7 @@ void PR2Manager::robotInit(bool open_grippers)
 	torso.sendGoal(defaultTorso);
 
 	arms_joint.sendGoal(defaultArmJointsL, ArmsJoint::LEFT);
-	arms_joint.sendGoal(defaultArmJointsR, ArmsJoint::RIGHT);
+	//arms_joint.sendGoal(defaultArmJointsR, ArmsJoint::RIGHT);
 
 	//head.sendGoalCart("torso_frame", 0.48,0.08,-0.05, 3.0);
 	head.sendGoal(0.1, 0.5, 0.0, 0.0);
