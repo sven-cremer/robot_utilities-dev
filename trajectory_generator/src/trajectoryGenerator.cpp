@@ -57,6 +57,7 @@ void TrajectoryGenerator::initGrid()
 			p.x = layout.origin.x + ix*layout.dx;
 
 			// Compensate for nonlinearities
+			/*
 			if(alphabet == 'C')
 			{
 				p.x += 0.04;
@@ -66,6 +67,7 @@ void TrajectoryGenerator::initGrid()
 				p.x += 0.015;
 			if(alphabet == 'I')
 				p.x += 0.005;
+			*/
 
 			grid_[alphabet] = p;
 
