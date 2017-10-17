@@ -33,6 +33,9 @@ ArmsCartesian::ArmsCartesian()
 
 	loadGainParameters();
 
+	loadROSParameters("l_cart", defaultGainsL);
+	loadROSParameters("r_cart", defaultGainsR);
+
 	loadPosture(RIGHT,elbowupr);
 	loadPosture(LEFT, elbowupl);
 
@@ -48,23 +51,36 @@ ArmsCartesian::~ArmsCartesian()
 
 }
 
-void ArmsCartesian::loadGainParameters(){
-	int NUMBER_OF_GAINS = 4;
+void ArmsCartesian::loadGainParameters()
+{
+	int N = 0;
 
-	for(int i=0;i<NUMBER_OF_GAINS;i++)
+	if(!(nh.getParam("number_of_gains", N))){ROS_WARN("ArmsCartesian - Custom gain parameter not found!");}
+
+	for(int i=0;i<N;i++)
 	{
 		GainValue gain_tmp;
 
 		std::string zone = "/gain_" +  boost::lexical_cast<std::string>(i+1);
 
-		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_p",  gain_tmp.t_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
-		if(!(nh.getParam(zone + "/t_d",  gain_tmp.t_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_p",  gain_tmp.r_p))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
-		if(!(nh.getParam(zone + "/r_d",  gain_tmp.r_d))) {ROS_ERROR("ArmsCartesian - Gain Parameter Not found.");}
+		if(!(nh.getParam(zone + "/name", gain_tmp.name))){ROS_ERROR("ArmsCartesian - Custom gain parameter not found!");}
+		if(!(nh.getParam(zone + "/t_p",  gain_tmp.t_p))) {ROS_ERROR("ArmsCartesian - Custom gain parameter not found!");}
+		if(!(nh.getParam(zone + "/t_d",  gain_tmp.t_d))) {ROS_ERROR("ArmsCartesian - Custom gain parameter not found!");}
+		if(!(nh.getParam(zone + "/r_p",  gain_tmp.r_p))) {ROS_ERROR("ArmsCartesian - Custom gain parameter not found!");}
+		if(!(nh.getParam(zone + "/r_d",  gain_tmp.r_d))) {ROS_ERROR("ArmsCartesian - Custom gain parameter not found!");}
 
 		gains.push_back(gain_tmp);
 	}
+}
+
+void ArmsCartesian::loadROSParameters(std::string ns, GainValue g)
+{
+	std::string path = ns + "/cart_gains";
+
+	if(!(nh.getParam(path + "/trans/p", g.t_p))) {ROS_WARN("ArmsCartesian - ROS parameter not found!");}
+	if(!(nh.getParam(path + "/trans/d", g.t_d))) {ROS_WARN("ArmsCartesian - ROS parameter not found!");}
+	if(!(nh.getParam(path + "/rot/p",   g.r_p))) {ROS_WARN("ArmsCartesian - ROS parameter not found!");}
+	if(!(nh.getParam(path + "/rot/d",   g.r_d))) {ROS_WARN("ArmsCartesian - ROS parameter not found!");}
 }
 
 bool ArmsCartesian::getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::PoseStamped& result)
@@ -87,6 +103,14 @@ bool ArmsCartesian::getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pos
 	}
 
 	return true;
+}
+
+bool ArmsCartesian::getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pose& result)
+{
+	geometry_msgs::PoseStamped p;
+	bool success = getCurrentPose(a, p);
+	result = p.pose;
+	return success;
 }
 
 bool ArmsCartesian::waitForMotion(double max_duration)
@@ -172,54 +196,72 @@ bool ArmsCartesian::updateState()
 	return true;
 }
 
-bool ArmsCartesian::setGains(std::string gain_name, ArmsCartesian::WhichArm arm)
+bool ArmsCartesian::getGains(std::string name, GainValue &g)
 {
-	if(arm==ArmsCartesian::LEFT){
-		return setGains(gain_name,"left");
-	}
-	if(arm==ArmsCartesian::RIGHT){
-		return setGains(gain_name,"right");
+	for(int i=0;i<this->gains.size();i++)
+	{
+		GainValue temp = (GainValue)this->gains[i];
+		if(temp.name == name){
+			g = temp;
+			return true;
+		}
 	}
 	return false;
 }
 
-bool ArmsCartesian::setGains(std::string gain_name, std::string arm)
+bool ArmsCartesian::setGains(std::string gain_name, ArmsCartesian::WhichArm arm)
 {
-	GainValue gain_;
-	for(int i=0;i<this->gains.size();i++)
+	GainValue gain;
+	if(!getGains(gain_name, gain))
 	{
-		GainValue temp = (GainValue)this->gains[i];
-		if(temp.name == gain_name){
-			gain_ = temp;
-			i = gains.size();//Just faster way to exit loop
-		}
+		ROS_ERROR("ArmsCartesian - could not find gains for %s!",gain_name.c_str());
+		return false;
 	}
-
-	std::vector<double> gains;
-	gains.resize(4);
-	gains.at(0) = gain_.t_p;
-	gains.at(1) = gain_.r_p;
-	gains.at(2) = gain_.t_d;
-	gains.at(3) = gain_.r_d;
-
-	setGains(gains,arm);
+	return setGains(gain, arm);
 }
 
-bool ArmsCartesian::setGains(std::vector<double>& gains, std::string arm){
+bool ArmsCartesian::setGains(double Kp_trans, double Kp_rot, double Kd_trans, double Kd_rot, ArmsCartesian::WhichArm arm)
+{
+	GainValue gain;
+	gain.t_p = Kp_trans;
+	gain.t_d = Kd_trans;
+	gain.r_p = Kp_rot;
+	gain.r_d = Kd_rot;
+
+	return setGains(gain, arm);
+}
+
+bool ArmsCartesian::setGains(GainValue gain, ArmsCartesian::WhichArm arm)
+{
+	std::vector<double> g;
+	g.resize(4);
+	g.at(0) = gain.t_p;
+	g.at(1) = gain.r_p;
+	g.at(2) = gain.t_d;
+	g.at(3) = gain.r_d;
+
+	return setGains(g, arm);
+}
+
+bool ArmsCartesian::setGains(std::vector<double>& gains, ArmsCartesian::WhichArm arm)
+{
 	std_msgs::Float64MultiArray msg;
 
-	msg.data.resize(12);
+	msg.data.resize(12); // 6 values replaces all the Kp terms (trans, trans, trans, rot, rot, rot).
+	                     // 12 Replaces the Kp and Kd terms.
 
 	ROS_INFO_STREAM("ArmsCartesian::setGains():Publishing new arm gains for " + arm);
 
+	//tf::matrixEigenToMsg(Kd, msg);	<- Easier with Eigen
+
 	if(gains.size()==4){
-		msg.data.at(0) =  gains[0];
-		msg.data.at(1) =  gains[0];
-		msg.data.at(2) =  gains[0];
-		msg.data.at(3) =  gains[1];
-		msg.data.at(4) =  gains[1];
-		msg.data.at(5) =  gains[1];
-		msg.data.at(6) =  gains[2];
+		msg.data.at(0) =  gains[0]; // Kp-trans-x
+		msg.data.at(1) =  gains[0]; // Kp-trans-y
+		msg.data.at(2) =  gains[0]; // Kp-trans-z
+		msg.data.at(3) =  gains[1]; // Kp-rot-x
+		msg.data.at(4) =  gains[1]; // Kp-rot-y
+		msg.data.at(5) =  gains[1]; // Kp-rot-z
+		msg.data.at(6) =  gains[2]; // Kd
 		msg.data.at(7) =  gains[2];
 		msg.data.at(8) =  gains[2];
 		msg.data.at(9) =  gains[3];
@@ -242,12 +284,12 @@ bool ArmsCartesian::setGains(std::vector<double>& gains, std::string arm){
 		return false;
 	}
 
-	if(arm == "left"){
+	if(arm == ArmsCartesian::LEFT){
 		ROS_INFO_STREAM("Publishing new left arm gains");
 		lgainPub.publish(msg);
 		return true;
 	}
-	if(arm == "right"){
+	if(arm == ArmsCartesian::RIGHT){
 		ROS_INFO_STREAM("Publishing new right arm gains");
 		rgainPub.publish(msg);
 		return true;

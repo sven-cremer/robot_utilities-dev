@@ -5,10 +5,13 @@ project(trajectory_generator)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
+  tf
+  cmake_modules
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -16,8 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES trajectory_generator
-  CATKIN_DEPENDS geometry_msgs #roscpp
-#  DEPENDS system_lib
+  CATKIN_DEPENDS geometry_msgs cmake_modules roscpp tf
+  DEPENDS Eigen
 )
 
 ###########
@@ -28,6 +31,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library

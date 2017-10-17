@@ -31,6 +31,7 @@ REVISION HISTORY:
 #include <apc_robot/apc_arms_cartesian.h>
 #include <apc_robot/pr2_torso.h>
 #include <apc_robot/apc_robot_grippers.h>
+#include <apc_robot/pr2_head.h>
 
 // Service messages
 #include <pr2_controllers_msgs/JointTrajectoryAction.h>
@@ -63,6 +64,7 @@ public:
 	void off(		bool open_grippers=true);
 
 	void setTorso(double height);
+	void lookAtPoint(geometry_msgs::Point p, double duration);
 
 	void openGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
 	void closeGrippers(PR2Manager::WhichArm a = PR2Manager::BOTH);
@@ -73,6 +75,9 @@ public:
 	PR2Manager::ControlState controllerState(std::string name);
 
 	bool setControllers(const std::vector<std::string> default_controllers, const std::vector<std::string> new_controllers);
+
+	void setDefaultTorso(double height);
+	void setDefaultArmJoints(PR2Manager::WhichArm a, std::vector<double> joint_values);
 
 private:
 
@@ -87,6 +92,11 @@ private:
 	Gripper grippers;
 	ArmsJoint arms_joint;
 	//ArmsCartesian arms_cart;
+	Head head;
+
+	double defaultTorso;
+	std::vector<double> defaultArmJointsL;
+	std::vector<double> defaultArmJointsR;
 
 	pr2_controllers_msgs::JointTrajectoryGoal leftArmStartPosition();
 	pr2_controllers_msgs::JointTrajectoryGoal rightArmStartPosition();

@@ -17,23 +17,25 @@ Constructor initializes action client and waits for server
 Head::Head()
 {
 	ROS_INFO("Head::Head - Initializing");
-	point_client = new HeadClient("/head_traj_controller/point_head_action", true);
+	point_client  = new HeadClient("/head_traj_controller/point_head_action", true);
 	action_client = new TrajClient("/head_traj_controller/joint_trajectory_action", true);
 
 	// Wait for action server to come up
-	while(!point_client->waitForServer(ros::Duration(1.0)) && !action_client->waitForServer(ros::Duration(1.0)))
-	{
-		ROS_INFO(" Waiting for the head_traj_controller servers...");
-	}
-	ROS_INFO(" Connected to head_traj_controller server!");
+	if(point_client->waitForServer(ros::Duration(1.0)))
+		ROS_INFO(" Connected to PointHead action server!");
+	else
+		ROS_ERROR(" Failed to connect to /head_traj_controller/point_head_action server!");
 
+	if(action_client->waitForServer(ros::Duration(1.0)))
+		ROS_INFO(" Connected to JointTrajectory action server!");
+	else
+		ROS_ERROR(" Failed to connect to /head_traj_controller/joint_trajectory_action server!");
 
 //	// Wait 3 seconds for trajectory filter
 //	if(ros::service::waitForService("trajectory_filter/filter_trajectory",ros::Duration(3.0)))
 //		ROS_INFO("Connected to joint_trajectory_action server!");
 //	else
 //		ROS_WARN("Failed to connect to joint_trajectory_action server!");	// Todo: set flag to prevent execution of certain functions
-
 
 	motionInProgress = false;
 	point_motionInProgress = false;
@@ -50,6 +52,11 @@ Head::~Head()
 /***********************************************************************************************************************
 Points the high-def camera frame at a point in a given frame
 ***********************************************************************************************************************/
+void Head::sendGoalCart(std::string frame_id, geometry_msgs::Point p, double duration)
+{
+	sendGoalCart(frame_id, p.x, p.y, p.z, duration);
+}
+
 void Head::sendGoalCart(std::string frame_id, double x, double y, double z, double duration)
 {
 
@@ -72,7 +79,7 @@ void Head::sendGoalCart(std::string frame_id, double x, double y, double z, doub
 	if (nh.ok())
 	{
 		//cancelMotion();														// Todo: make a sendNewGoalCart
-		ROS_INFO("Sending Point Head goal ...");
+		ROS_DEBUG("Sending Point Head goal ...");
 		point_client->sendGoal(goal);                                       // TODO: ADD TO motionComplte/ cancel Goals
 		point_motionInProgress = true;
 	}
@@ -359,13 +366,14 @@ int main(int argc, char **argv)
 	Head head;
 
 	head.shakeHead(2);
+	sleep(1.0);
 
 	// send Head commands
 	ROS_INFO("### Testing Head pointing ###");
 	head.sendGoalCart("odom_combined", 2, 0, 1.5, 5.0);
-	sleep(5.0);
+	sleep(10.0);
 	head.sendGoalCart("odom_combined", 2, 0, 1.0, 5.0);
-	sleep(5.0);
+	sleep(10.0);
 
 	ROS_INFO("### Testing Head trajectory ###");
 	head.sendGoal(0.1, -0.2, 0.0, 0.0);

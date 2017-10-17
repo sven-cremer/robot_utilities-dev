@@ -62,7 +62,8 @@
 #include <apc_msgs/JTCartesianControllerState.h>
 #include <tf/transform_listener.h>
 
-#include<string>
+#include <string>
+//#include <Eigen/Core>
 
 //Services
 #include <apc_msgs/SetGain.h>
@@ -158,7 +159,10 @@ private:
 	double timeOut;
 	bool leftMotionInProgress;
 	bool rightMotionInProgress;
-	std::vector<GainValue> gains;
+	std::vector<GainValue> gains;	// TODO use a map instead
+
+	GainValue defaultGainsL;
+	GainValue defaultGainsR;
 
 	//!JT Cartesian Controller
 	/*!
@@ -196,11 +200,16 @@ public:
 	 Deconstructor
 	 */
 	~ArmsCartesian();
-	//! Loads arm gain parameters set from the parameter server
+	//! Loads custom arm gain parameters set from the parameter server
 	/*!
 	\sa ArmsCartesian(), ~ArmsCartesian()
 	 */
 	void loadGainParameters();
+	//! Loads default arm gain parameters set from the parameter server
+	/*!
+	\sa ArmsCartesian(), ~ArmsCartesian()
+	 */
+	void loadROSParameters(std::string ns, GainValue g);
 	//! Moves specified arm into a given Cartesian position
 	/*!
 	\param arm an enumerated type
@@ -263,6 +272,14 @@ public:
 	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), moveInDirection()
 	 */
 	bool getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::PoseStamped& result);
+	//! Gets the current position of the specified arm
+	/*!
+	\param arm an enumerated type
+	\param result is a geometry_msgs::Pose
+	\return True upon successful retrieval of arm position
+	\sa ArmsCartesian(), ~ArmsCartesian(), moveToPose(), moveInDirection()
+	 */
+	bool getCurrentPose(ArmsCartesian::WhichArm a, geometry_msgs::Pose& result);
 	//! Moves both arms into specified joint positions
 	/*!
 	\param posture_position a std::vector of doubles
@@ -346,15 +363,13 @@ public:
 	\sa ArmsCartesian(), ~ArmsCartesian(), motionComplete(), cancelMotion(), updateState()
 	 */
 	bool waitForMotion(double max_duration);
-	//!Overloaded setGain functions
-	//! Sets gain values to a specifed arm
+	//! Returns GainValue structure for a given name
 	/*!
-	\param gain_name is a std::string
-	\param arm is a std::string
-	\return True upon successful update
-	\sa ArmsCartesian(), ~ArmsCartesian(), setGains()
+	\param
+	\param
 	 */
-	bool setGains(std::string gain_name, std::string arm);
+	bool getGains(std::string name, GainValue &g);
+	//!Overloaded setGain functions
 	//! Sets gain values to a specifed arm
 	/*!
 	\param gain_name is a std::string
@@ -363,6 +378,23 @@ public:
 	\sa ArmsCartesian(), ~ArmsCartesian(), setGains()
 	 */
 	bool setGains(std::string gain_name, ArmsCartesian::WhichArm arm);
+	//!Overloaded setGain functions
+	//! Sets gain values to a specified arm
+	/*!
+	\param
+	\param arm is an enumerated type
+	\return True upon successful update
+	\sa ArmsCartesian(), ~ArmsCartesian(), setGains()
+	 */
+	bool setGains(double Kp_trans, double Kp_rot, double Kd_trans, double Kd_rot, ArmsCartesian::WhichArm arm);
+	//! Sets gain values to a specifed arm
+	/*!
+	\param gain_name is a GainValue structure
+	\param arm is an enumerated type
+	\return True upon successful update
+	\sa ArmsCartesian(), ~ArmsCartesian(), setGains()
+	 */
+	bool setGains(GainValue gain, ArmsCartesian::WhichArm arm);
 	//! Sets specified gain values to a specifed arm
 	/*!
 	\param gains is a std::vector of doubles
@@ -370,7 +402,7 @@ public:
 	\return True upon successful update
 	\sa ArmsCartesian(), ~ArmsCartesian(), setGains()
 	 */
-	bool setGains(std::vector<double>& gains, std::string arm);
+	bool setGains(std::vector<double>& gains, ArmsCartesian::WhichArm arm);
 	//! Sets specified gain values to a specifed arm
 	/*!
 	\param req is a apc_msgs::SetGain::Request

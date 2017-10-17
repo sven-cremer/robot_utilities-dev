@@ -33,7 +33,7 @@ initializes services and clients
 PR2Manager::PR2Manager(std::string arm_ctrl_new)
 {
 	// Set controller names
-	arm_controllers_default.push_back("r_arm_controller");
+	//arm_controllers_default.push_back("r_arm_controller");
 	arm_controllers_default.push_back("l_arm_controller");
 	arm_controllers_new.push_back(arm_ctrl_new);
 
@@ -92,6 +92,25 @@ PR2Manager::PR2Manager(std::string arm_ctrl_new)
 
 	// Position robot with grippers open
 	//robotInit(true);
+	defaultTorso = 0.05;
+	defaultArmJointsL.clear();
+	defaultArmJointsR.clear();
+
+	defaultArmJointsL.push_back(0.744537);	// TODO read from yaml file
+	defaultArmJointsL.push_back(0.518209);	// PR2 tactile calibration
+	defaultArmJointsL.push_back(1.05854);
+	defaultArmJointsL.push_back(-1.80121);
+	defaultArmJointsL.push_back(-3.18497);
+	defaultArmJointsL.push_back(-1.00517);
+	defaultArmJointsL.push_back(2.30901);
+
+	defaultArmJointsR.push_back(-0.263623);
+	defaultArmJointsR.push_back(0.856581 );
+	defaultArmJointsR.push_back(-0.615513);
+	defaultArmJointsR.push_back(-0.960093);
+	defaultArmJointsR.push_back(5.0942);
+	defaultArmJointsR.push_back(-1.32154);
+	defaultArmJointsR.push_back(-3.15487);
 
 	ROS_INFO("PR2Manager initialized!");
 }
@@ -120,43 +139,13 @@ void PR2Manager::robotInit(bool open_grippers)
 //		sleep(2);
 //	}
 
-	torso.sendGoal(0.05);
+	torso.sendGoal(defaultTorso);
 
-	std::vector<double> l_joints;	// TODO read from yaml file
-//	l_joints.push_back(0.149233);	// PR2 cart pushing
-//	l_joints.push_back(1.16291);
-//	l_joints.push_back(0.159471);
-//	l_joints.push_back(-1.71565);
-//	l_joints.push_back(-3.1908);
-//	l_joints.push_back(-0.521468);
-//	l_joints.push_back(-1.52892);
-	l_joints.push_back(0.744537);	// PR2 tactile calibration
-	l_joints.push_back(0.518209);
-	l_joints.push_back(1.05854);
-	l_joints.push_back(-1.80121);
-	l_joints.push_back(-3.18497);
-	l_joints.push_back(-1.00517);
-	l_joints.push_back(2.30901);
+	arms_joint.sendGoal(defaultArmJointsL, ArmsJoint::LEFT);
+	//arms_joint.sendGoal(defaultArmJointsR, ArmsJoint::RIGHT);
 
-	std::vector<double> r_joints;
-//	r_joints.push_back(0.0063641);
-//	r_joints.push_back(1.1557);
-//	r_joints.push_back(-0.00750675);
-//	r_joints.push_back(-1.73534);
-//	r_joints.push_back(3.09916);
-//	r_joints.push_back(-0.607375);
-//	r_joints.push_back(-1.5531);
-	r_joints.push_back(-0.263623);
-	r_joints.push_back(0.856581 );
-	r_joints.push_back(-0.615513);
-	r_joints.push_back(-0.960093);
-	r_joints.push_back(5.0942);
-	r_joints.push_back(-1.32154);
-	r_joints.push_back(-3.15487);
-
-
-	arms_joint.sendGoal(l_joints, ArmsJoint::LEFT);
-	arms_joint.sendGoal(r_joints, ArmsJoint::RIGHT);
+	//head.sendGoalCart("torso_frame", 0.48,0.08,-0.05, 3.0);
+	head.sendGoal(0.1, 0.5, 0.0, 0.0);
 
 	ROS_INFO("PR2 in position!");
 
@@ -247,6 +236,13 @@ PR2Manager::~PR2Manager()
 {
 	//off;
 
+}
+/***********************************************************************************************************************
+Look at Pose
+***********************************************************************************************************************/
+void PR2Manager::lookAtPoint(geometry_msgs::Point p, double duration)
+{
+	head.sendGoalCart("torso_lift_link", p, duration);
 }
 /***********************************************************************************************************************
 Goal objects for starting positions
@@ -386,7 +382,27 @@ bool PR2Manager::setControllers(const std::vector<std::string> default_controlle
 
 	return true;
 }
-
+/***********************************************************************************************************************
+set functions
+***********************************************************************************************************************/
+void PR2Manager::setDefaultTorso(double height)
+{
+	defaultTorso = height;
+}
+void PR2Manager::setDefaultArmJoints(PR2Manager::WhichArm a, std::vector<double> joint_values)
+{
+	switch(a)
+	{
+	case PR2Manager::LEFT:
+		defaultArmJointsL = joint_values;
+		break;
+	case PR2Manager::RIGHT:
+		defaultArmJointsR = joint_values;
+		break;
+	default:
+		ROS_WARN("Unable to set arm joint values!");
+	}
+}
 /***********************************************************************************************************************
 Main loop for testing
 ***********************************************************************************************************************/

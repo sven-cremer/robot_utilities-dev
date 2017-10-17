@@ -10,6 +10,11 @@
 
 // ROS
 //#include <ros/ros.h>
+#include <tf/tf.h>
+
+// Math
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 // Messages
 #include <geometry_msgs/Point.h>
@@ -22,6 +27,14 @@ class TrajectoryGenerator
 {
 private:
 
+	struct Grid2d{
+		geometry_msgs::Point origin;
+		int Nx, Ny;
+		double dx, dy;
+	};
+
+	Grid2d layout;
+
 	//ros::NodeHandle nh;
 	//ros::ServiceServer srv_srv_;
 
@@ -29,11 +42,14 @@ private:
 
 	int numPoints;
 
+
 public:
 
 	TrajectoryGenerator();
 	~TrajectoryGenerator();
 
+	// Initialize grid
+	void initGrid();
 	void initGrid( int Nx, int Ny,
                    double dx, double dy,
                    geometry_msgs::Point origin);
@@ -42,6 +58,9 @@ public:
 	void printGridMap();
 	void printGridLayout();
 
+	// Interpolator with constant linear and angular velocity
+	void interpolator(const Eigen::Affine3d &x0, const Eigen::Affine3d &x1, int N, std::vector<Eigen::Affine3d> &result);
+	void interpolator(const geometry_msgs::Pose &ps, const geometry_msgs::Pose &pf, int N, std::vector<geometry_msgs::Pose> &result);
 
 };
 

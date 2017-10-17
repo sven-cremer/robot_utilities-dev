@@ -1,3 +1,5 @@
+number_of_gains: 4
+
 gain_1:
   name: initial
   t_p: 800.0
